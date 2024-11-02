@@ -19,6 +19,9 @@ public:
     void assignProcessToCore(Process& process, int coreId);
     vector<bool> getCoresStatus() const;
     const int getNumCores() const;
+    Process& getProcessOnCore(int coreId); 
+    bool areAllCoresIdle() const;
+
 };
 
 #endif

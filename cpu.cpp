@@ -54,5 +54,22 @@ void CPU::assignProcessToCore(Process& process, int coreId) {
     process.updateProcessStatus(Process::Running); 
 }
 
+bool CPU::areAllCoresIdle() const {
+    for (const auto& status : coresStatus) {
+        if (status) { 
+            return false;
+        }
+    }
+    return true; // All cores are idle
+}
+
+
 vector<bool> CPU::getCoresStatus() const { return coresStatus; }
 const int CPU::getNumCores() const { return num_cores; }
+
+Process& CPU::getProcessOnCore(int coreId) {
+    if (coreId < 0 || coreId >= processInCore.size() || !coresStatus[coreId]) {
+        throw std::out_of_range("Core ID is invalid or core is idle");
+    }
+    return processInCore[coreId]; // Assuming processInCore 
+}
