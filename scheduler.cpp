@@ -4,13 +4,33 @@
 #include <string>
 #include <queue>
 #include <vector>
+#include <thread>
 
 using namespace std;
 
-void displayGanttChart(const std::vector<ExecutionRecord>& data) {
+
+void outGanttChart(vector<vector<ExecutionRecord>> ganttChartData, string processQueueString){
+    
+    ofstream outFile("gantt_chart.txt");
+    if (outFile.is_open()) {
+        outFile << processQueueString;
+        for (int coreId = 0; coreId < ganttChartData.size(); ++coreId) {
+            outFile << "Gantt Chart for Core " << coreId << ":\n";
+            for (const auto& record : ganttChartData[coreId]) {
+                outFile << "Core " << record.coreIndex << ": [" << record.startTime << "-" << record.endTime
+                  << "] Process: " << record.processName << endl;
+            };
+            outFile << "\n";
+        }
+        outFile.close();
+    } else {
+        cerr << "Unable to open file for writing the Gantt chart data.\n";
+    }
+}
+void displayGanttChart(const vector<ExecutionRecord>& data) {
     for (const auto& record : data) {
-        std::cout << "Core " << record.coreIndex << ": [" << record.startTime << "-" << record.endTime
-                  << "] Process: " << record.processName << " Update from: " << record.updateFrom << std::endl;
+        cout << "Core " << record.coreIndex << ": [" << record.startTime << "-" << record.endTime
+                  << "] Process: " << record.processName << endl;
     }
 }
 
@@ -24,15 +44,22 @@ void Scheduler::scheduleProcess(CPU& cpu) {
     string scheduler_type;
 
     loadConfig(num_cpu, scheduler_type, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec);
+    vector<vector<ExecutionRecord>> ganttChartData(num_cpu);
+
+    string processQueueString = printProcessQueue();
 
     if (scheduler_type == "fcfs") {
         FCFS(cpu);
     } else if (scheduler_type == "rr") {
-        RoundRobin(cpu, quantum_cycles);
+        ganttChartData = RoundRobin(cpu, quantum_cycles);
     }
+
+    // outGanttChart(ganttChartData, processQueueString);
+    
 }
 
 void Scheduler::FCFS(CPU& cpu) {
+    printProcessQueue();
     for (int i = 0; i < cpu.getNumCores(); ++i) {
         if (!processQueue.empty() && !cpu.getCoresStatus()[i]) {
             Process process = processQueue.front();
@@ -43,45 +70,40 @@ void Scheduler::FCFS(CPU& cpu) {
 }
 
 
-void Scheduler::printProcessQueue() {
-    std::queue<Process> tmp_q = processQueue;  // Create a copy of the queue
+string Scheduler::printProcessQueue() {
+    queue<Process> tmp_q = processQueue;
+    ostringstream output;
 
     if (tmp_q.empty()) {
-        std::cout << "Process queue is empty." << std::endl;
-        return;
+        return "Process queue is empty.\n";
     }
 
-    std::cout << "Current Process Queue:" << std::endl;
-    std::string totalLinesOutput;  // Accumulate total lines for single-line output
-    char processLabel = 'A';  // Start labeling processes from 'A'
+    output << "Current Process Queue:\n";
+    string totalLinesOutput;
+    char processLabel = 'A';
     
     while (!tmp_q.empty()) {
         Process q_element = tmp_q.front();
+        output << "Process " << processLabel << ": "
+               << " Name: " << q_element.getName()
+               << " | Total Lines: " << q_element.getTotalLines()
+               << "\n";
         
-        // Original detailed output for each process with its label
-        std::cout << "Process " << processLabel << ": "
-                  << " Name: " << q_element.getName()
-                  << " | Total Lines: " << q_element.getTotalLines()
-                  << " | Address: " << &q_element
-                  << std::endl;
-        
-        // Add to the single-line output for Total Lines
-        totalLinesOutput += std::to_string(q_element.getTotalLines()) + " ";
+        totalLinesOutput += to_string(q_element.getTotalLines()) + " ";
         tmp_q.pop();
-        processLabel++;  // Move to the next letter
+        processLabel++;
     }
 
-    // Print all Total Lines in one line at the end
-    std::cout << "Total Lines in Queue: " << totalLinesOutput << std::endl;
+    output << "Burst Times: " << totalLinesOutput << "\n";
+    return output.str();
 }
 
 
-void Scheduler::RoundRobin(CPU& cpu, int quantum_cycles) {
-    int currentTime = 0;
-    std::vector<std::vector<ExecutionRecord>> ganttChartData(cpu.getNumCores());  // Separate data for each core
-    printProcessQueue();
 
-    std::vector<int> quantumCycleCounters(cpu.getNumCores(), 0);
+vector<vector<ExecutionRecord>> Scheduler::RoundRobin(CPU& cpu, int quantum_cycles) {
+    int currentTime = 0;
+    vector<vector<ExecutionRecord>> ganttChartData(cpu.getNumCores());
+    vector<int> quantumCycleCounters(cpu.getNumCores(), 0);
 
     while (!processQueue.empty() || !cpu.areAllCoresIdle()) {
         for (int i = 0; i < cpu.getNumCores(); ++i) {
@@ -91,15 +113,12 @@ void Scheduler::RoundRobin(CPU& cpu, int quantum_cycles) {
                 cpu.assignProcessToCore(current_process, i);
                 current_process.updateProcessStatus(Process::Running);
 
-                // Record the start time for Gantt chart for the specific core
-                ganttChartData[i].push_back({current_process.getName(), i, currentTime, -1, "top"});
+                ganttChartData[i].push_back({current_process.getName(), i, currentTime, -1});
                 
-                // Reset quantum cycle counter for the newly assigned process
                 quantumCycleCounters[i] = 0;
             }
         }
 
-        // Execute one quantum cycle for all processes currently on cores
         for (int i = 0; i < quantum_cycles; ++i) {
             ++currentTime;
 
@@ -108,20 +127,21 @@ void Scheduler::RoundRobin(CPU& cpu, int quantum_cycles) {
                     Process& runningProcess = cpu.getProcessOnCore(coreId);
                     runningProcess.executeInstruction();
                     
-                    ganttChartData[coreId].back().endTime = currentTime;  // End time for this core's process
-                    
-                    // Increment quantum cycle counter for this core
+                    ganttChartData[coreId].back().endTime = currentTime; 
                     ++quantumCycleCounters[coreId];
 
+                    
+                    runningProcess.printHelloWorld(coreId); 
+
+
                     if (runningProcess.getStatus() == Process::Done) {
-                        cout << runningProcess.getName() << " done at " << currentTime << endl;
                         cpu.completeProcess(coreId);
                         quantumCycleCounters[coreId] = 0;
                         if (!processQueue.empty()) {
                             Process current_process = processQueue.front();
                             processQueue.pop();
                             cpu.assignProcessToCore(current_process, coreId);
-                            ganttChartData[coreId].push_back({ current_process.getName(), coreId, currentTime, -1, "immediate" });
+                            ganttChartData[coreId].push_back({ current_process.getName(), coreId, currentTime, -1 });
                         }
 
 
@@ -136,9 +156,7 @@ void Scheduler::RoundRobin(CPU& cpu, int quantum_cycles) {
                             Process current_process = processQueue.front();
                             processQueue.pop();
                             cpu.assignProcessToCore(current_process, coreId);
-
-
-                            ganttChartData[coreId].push_back({ current_process.getName(), coreId, currentTime, -1, "immediate" });
+                            ganttChartData[coreId].push_back({ current_process.getName(), coreId, currentTime, -1});
                         }
 
 
@@ -148,11 +166,7 @@ void Scheduler::RoundRobin(CPU& cpu, int quantum_cycles) {
         }
     }
 
-    // Display Gantt chart data for each core after execution
-    for (int coreId = 0; coreId < ganttChartData.size(); ++coreId) {
-        std::cout << "Gantt Chart for Core " << coreId << ":\n";
-        displayGanttChart(ganttChartData[coreId]);
-    }
+    return ganttChartData;
 }
 
 

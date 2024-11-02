@@ -1,0 +1,34 @@
+Current Process Queue:
+Process A:  Name: process_39425 | Total Lines: 5
+Process B:  Name: process_82868 | Total Lines: 7
+Process C:  Name: process_75670 | Total Lines: 5
+Process D:  Name: process_97115 | Total Lines: 7
+Process E:  Name: process_24607 | Total Lines: 6
+Process F:  Name: process_05566 | Total Lines: 6
+Process G:  Name: process_38083 | Total Lines: 7
+Process H:  Name: process_79099 | Total Lines: 6
+Process I:  Name: process_83863 | Total Lines: 7
+Process J:  Name: process_77413 | Total Lines: 6
+Burst Times: 5 7 5 7 6 6 7 6 7 6 
+Gantt Chart for Core 0:
+Core 0: [0-4] Process: process_39425
+Core 0: [4-8] Process: process_82868
+Core 0: [8-12] Process: process_75670
+Core 0: [12-16] Process: process_97115
+Core 0: [16-20] Process: process_24607
+Core 0: [20-24] Process: process_05566
+Core 0: [24-28] Process: process_38083
+Core 0: [28-32] Process: process_79099
+Core 0: [32-36] Process: process_83863
+Core 0: [36-40] Process: process_77413
+Core 0: [40-41] Process: process_39425
+Core 0: [41-44] Process: process_82868
+Core 0: [44-45] Process: process_75670
+Core 0: [45-48] Process: process_97115
+Core 0: [48-50] Process: process_24607
+Core 0: [50-52] Process: process_05566
+Core 0: [52-55] Process: process_38083
+Core 0: [55-57] Process: process_79099
+Core 0: [57-60] Process: process_83863
+Core 0: [60-62] Process: process_77413
+

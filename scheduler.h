@@ -6,6 +6,7 @@
 #include "utils.h"
 #include <queue>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -14,7 +15,6 @@ struct ExecutionRecord {
     int coreIndex;
     int startTime;
     int endTime;
-    std::string updateFrom;
 };
 
 class Scheduler {
@@ -23,8 +23,8 @@ public:
     void scheduleProcess(CPU& cpu);
     void FCFS(CPU& cpu);
     queue<Process> getProcessQueue();
-    void RoundRobin(CPU& cpu, int quantum_cycles);
-    void printProcessQueue();
+    vector<vector<ExecutionRecord>> RoundRobin(CPU& cpu, int quantum_cycles);
+    string printProcessQueue();
 
 private:
     queue<Process> processQueue;
