@@ -128,7 +128,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="abstractConsole.cpp" />
+    <ClCompile Include="baseScreen.cpp" />
     <ClCompile Include="commands.cpp" />
+    <ClCompile Include="consoleManager.cpp" />
     <ClCompile Include="cpu.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainConsole.cpp" />
@@ -139,7 +142,10 @@
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="abstractConsole.h" />
+    <ClInclude Include="baseScreen.h" />
     <ClInclude Include="commands.h" />
+    <ClInclude Include="consoleManager.h" />
     <ClInclude Include="cpu.h" />
     <ClInclude Include="mainConsole.h" />
     <ClInclude Include="process.h" />
@@ -147,6 +153,9 @@
     <ClInclude Include="runScreenLoop.h" />
     <ClInclude Include="scheduler.h" />
     <ClInclude Include="utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="config.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

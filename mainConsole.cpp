@@ -18,12 +18,28 @@ MainConsole::~MainConsole() {
     }
 }
 
-
-void MainConsole::printHeading() {
-    Utils::printHeader(); 
+void MainConsole::onEnabled()
+{
+    this->display();
+    this->process();
 }
 
-void MainConsole::drawConsole() {
+void MainConsole::display()
+{
+    Utils::printHeader();
+}
+
+void MainConsole::process()
+{
+    while (true) {
+        std::string command;
+        std::cout << "> ";
+        std::getline(std::cin >> std::ws, command);
+        processCommand(command);
+    }
+}
+
+void MainConsole::processCommand(std::string command) {
     while (running) {
         Utils::printHeader();
         std::string command;
@@ -76,4 +92,3 @@ void MainConsole::drawConsole() {
         }
     }
 }
-
