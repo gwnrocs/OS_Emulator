@@ -26,6 +26,15 @@ namespace ProcessManager {
         return result != processes.end();
     }
 
+    // TO BE FIXED:
+    bool checkProcessDone(const std::string& name) {
+        auto result = std::find_if(processes.begin(), processes.end(), [name](const Process& obj) {
+            return obj.getName() == name && obj.getStatus() == Process::Done;  // Check if the process is done
+            });
+
+        return result != processes.end();  // Return true if the process is found and done
+    }
+
     /*void createProcess(const string& name) {
         if (checkProcessExist(name)) return;
         Process newProcess(name);
@@ -156,6 +165,4 @@ void manageProcesses(CPU& cpu, Scheduler& scheduler, atomic<bool>& stopFlag, int
 
         /*this_thread::sleep_for(chrono::milliseconds(50));*/
     }
-
-    
 }

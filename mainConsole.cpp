@@ -29,7 +29,7 @@ void MainConsole::display()
     Utils::printHeader();
 }
 
-// get input from user
+//TODO: Show header only once
 void MainConsole::process()
 {
     while (true) {
@@ -67,25 +67,20 @@ void MainConsole::processCommand(std::string command) {
         }
         else if (command == "clear") {
             Utils::clearScreen();
-            /*Utils::printHeader();*/
         }
         else if (command.substr(0, 9) == "screen -s") {
             ProcessManager::createProcess(command.substr(10));
-
-           /* std::cout << "\nCreating process for screen " << command.substr(10) << std::endl;
-            std::shared_ptr<Process> process = std::make_shared<Process>(command.substr(10));
-            std::cout << "Creating screen for process " << process->getName() << std::endl;
-            std::shared_ptr<BaseScreen> screen = std::make_shared<BaseScreen>(process, command.substr(10));
-            std::cout << "Screen created." << std::endl;
-            ConsoleManager::getInstance()->registerScreen(screen);
-            std::cout << "Screen registered.\n\n";*/
-
-            //ConsoleManager::getInstance()->switchConsole(screen);
         }
         else if (command.substr(0, 9) == "screen -r") {
-            //ProcessManager::redrawProcess(command.substr(10));
-            ConsoleManager::getInstance()->switchConsole(command.substr(10));
-            ProcessManager::redrawProcess(command.substr(10));
+            //TODO: Check if process is done
+            if (ProcessManager::checkProcessExist(command.substr(10)) == 0) 
+            {
+                std::cout << "Process " << command.substr(10) << " not found.\n";
+            }
+            else 
+            {
+                ConsoleManager::getInstance()->switchConsole(command.substr(10));
+            }
         }
         else if (command == "scheduler -test") {
             Commands::schedulerTest(*cpu, scheduler);

@@ -30,11 +30,11 @@ Process::Process(string name) {
 }
 
 void Process::displayInfo() const {
-    cout << "  =============\n"
+    cout << "\n  =============\n"
         << "  Process: " << processName << '\n'
         << "  Current Instruction: " << currentLine << '/' << totalLines << '\n'
         << "  Created At: " << creationTime << '\n'
-        << "  =============\n";
+        << "  =============\n\n";
 }
 
 void Process::drawConsole() {
