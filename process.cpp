@@ -32,25 +32,29 @@ Process::Process(string name) {
 
 void Process::drawConsole() {
     auto showDetails = [&]() {
-        std::cout << "\n  Process Name: " << processName << "\n";
-        std::cout << "  Time Created: " << creationTime << "\n";
+        if (status != 3) {
+            std::cout << "\n  Process Name: " << processName << "\n";
+            std::cout << "  Time Created: " << creationTime << "\n";
 
-        // Convert Status enum to string
-        std::string strStatus = "";
-        switch (status) {
-        case 0: strStatus = "Created"; break;
-        case 1: strStatus = "Waiting"; break;
-        case 2: strStatus = "Running"; break;
-        case 3: strStatus = "Done";
+            // Convert Status enum to string
+            std::string strStatus = "";
+            switch (status) {
+            case 0: strStatus = "Created"; break;
+            case 1: strStatus = "Waiting"; break;
+            case 2: strStatus = "Running"; break;
+            case 3: strStatus = "Done";
+            }
+
+            std::cout << "  Status: " << strStatus << "\n";
+
+            //TODO: Change to actual process ID
+            std::cout << "  ID: temp\n";
+            std::cout << "  Current Instruction Line: " << currentLine << "\n";
+            std::cout << "  Lines of Code: " << totalLines << "\n\n";
         }
-
-        std::cout << "  Status: " << strStatus << "\n";
-
-        //TODO: Change to actual process ID
-        std::cout << "  ID: temp\n";
-
-        std::cout << "  Current Instruction Line: " << currentLine << "\n";
-        std::cout << "  Lines of Code: " << totalLines << "\n\n";
+        else {
+            cout << "Finished!";
+        }
         };
 
     runScreenLoop(showDetails);
