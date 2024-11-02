@@ -69,17 +69,31 @@ void MainConsole::processCommand(std::string command) {
             Utils::clearScreen();
         }
         else if (command.substr(0, 9) == "screen -s") {
-            ProcessManager::createProcess(command.substr(10));
+            std::string processName = command.substr(10);
+
+            if (processName.empty() || std::all_of(processName.begin(), processName.end(), ::isspace)) {
+                std::cout << "  Error: No process name provided for 'screen -s'.\n";
+            }
+            else {
+                ProcessManager::createProcess(command.substr(10));
+            }
         }
         else if (command.substr(0, 9) == "screen -r") {
             //TODO: Check if process is done
-            if (ProcessManager::checkProcessExist(command.substr(10)) == 0) 
-            {
-                std::cout << "Process " << command.substr(10) << " not found.\n";
+            std::string processName = command.substr(10);
+
+            if (processName.empty() || std::all_of(processName.begin(), processName.end(), ::isspace)) {
+                std::cout << "  Error: No process name provided for 'screen -s'.\n";
             }
-            else 
-            {
-                ConsoleManager::getInstance()->switchConsole(command.substr(10));
+            else {
+                if (ProcessManager::checkProcessExist(command.substr(10)) == 0)
+                {
+                    std::cout << "  Process " << command.substr(10) << " not found.\n";
+                }
+                else
+                {
+                    ConsoleManager::getInstance()->switchConsole(command.substr(10));
+                }
             }
         }
         else if (command == "scheduler -test") {
