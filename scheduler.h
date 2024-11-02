@@ -9,6 +9,14 @@
 
 using namespace std;
 
+struct ExecutionRecord {
+    std::string processName;
+    int coreIndex;
+    int startTime;
+    int endTime;
+    std::string updateFrom;
+};
+
 class Scheduler {
 public:
     void addProcessToQueue(Process& process);
