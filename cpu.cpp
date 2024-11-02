@@ -51,6 +51,7 @@ void CPU::removeProcess(int coreId) {
 void CPU::assignProcessToCore(Process& process, int coreId) {
     coresStatus[coreId] = true;
     processInCore[coreId] = process; 
+    process.updateProcessStatus(Process::Running); 
 }
 
 vector<bool> CPU::getCoresStatus() const { return coresStatus; }

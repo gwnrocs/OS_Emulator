@@ -41,7 +41,6 @@ void Scheduler::FCFS(CPU& cpu) {
     for (int i = 0; i < cpu.getNumCores(); ++i) {
         if (!processQueue.empty() && !cpu.getCoresStatus()[i]) {
             Process process = processQueue.front();
-            process.updateProcessStatus(Process::Running); // shold be added to assignProcessToCore
             processQueue.pop();
             cpu.assignProcessToCore(process, i);
         }
@@ -54,7 +53,6 @@ void displayGanttChart(const std::vector<ExecutionRecord>& data) {
                   << "] Process: " << record.processName << std::endl;
     }
 }
-
 void Scheduler::printProcessQueue() {
     std::queue<Process> tmp_q = processQueue;  // Create a copy of the queue
 
@@ -64,15 +62,26 @@ void Scheduler::printProcessQueue() {
     }
 
     std::cout << "Current Process Queue:" << std::endl;
+    std::string totalLinesOutput;  // Accumulate total lines for single-line output
+
     while (!tmp_q.empty()) {
         Process q_element = tmp_q.front();
+        
+        // Original detailed output for each process
         std::cout << "Process Name: " << q_element.getName()
                   << " | Total Lines: " << q_element.getTotalLines()
                   << " | Address: " << &q_element
                   << std::endl;
+        
+        // Add to the single-line output for Total Lines
+        totalLinesOutput += std::to_string(q_element.getTotalLines()) + " ";
         tmp_q.pop();
     }
+
+    // Print all Total Lines in one line at the end
+    std::cout << "Total Lines in Queue: " << totalLinesOutput << std::endl;
 }
+
 
 void Scheduler::RoundRobin(CPU& cpu, int quantum_cycles) {
     int currentTime = 0;  
@@ -94,7 +103,6 @@ void Scheduler::RoundRobin(CPU& cpu, int quantum_cycles) {
         if (core_index != -1) {
             processQueue.pop();
             cpu.assignProcessToCore(current_process, core_index);
-            current_process.updateProcessStatus(Process::Running);
 
             int startTime = currentTime;
             for (int i = 0; i < quantum_cycles; ++i) {
@@ -110,6 +118,7 @@ void Scheduler::RoundRobin(CPU& cpu, int quantum_cycles) {
             ganttChartData.push_back({current_process.getName(), core_index, startTime, currentTime});
             if (current_process.getStatus() != Process::Done) {
                 processQueue.push(current_process);
+                current_process.updateProcessStatus(Process::Waiting);
             } 
 
         } else {
