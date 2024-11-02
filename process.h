@@ -20,6 +20,7 @@ public:
         Done
     };
 
+    void displayInfo() const;
     void drawConsole();
     void printHelloWorld(int coreId);
 
