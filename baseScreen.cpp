@@ -36,7 +36,7 @@ void BaseScreen::process() {
 }
 
 void BaseScreen::printProcessInfo() const {
-	std::cout << "Process Name: " << this->attachedProcess->getName() << std::endl;
-	std::cout << "Time Created: " << this->attachedProcess->getCreationTime() << std::endl;
-	std::cout << "Status: " << this->attachedProcess->getStatus() << std::endl;
+	std::cout << "\nProcess Name: " << this->attachedProcess->getName() << "\n\n";
+	std::cout << "Time Created: " << this->attachedProcess->getCreationTime() << "\n\n";
+	std::cout << "Status: " << this->attachedProcess->getStatus() << "\n\n";
 }

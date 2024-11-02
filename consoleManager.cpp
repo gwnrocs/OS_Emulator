@@ -41,16 +41,16 @@ void ConsoleManager::destroy()
 void ConsoleManager::registerScreen(std::shared_ptr<AConsole> screenRef)
 {
 	std::string screenName = screenRef->getName();
-	std::cout << "Registering screen with name " << screenName << std::endl;
+	//std::cout << "  \nRegistering screen with name " << screenName << std::endl;
 
 	if (this->consoleTable.find(screenName) != this->consoleTable.end())
 	{
-		std::cout << "Screen with name " << screenName << " already exists." << std::endl;
+		std::cout << "  \nScreen with name " << screenName << " already exists." << std::endl;
 		return;
 	}
 
 	this->consoleTable[screenName] = screenRef;
-	std::cout << "Screen with name " << screenRef->getName() << " registered." << std::endl;
+	//std::cout << "  \nScreen with name " << screenRef->getName() << " registered." << std::endl;
 }
 
 void ConsoleManager::switchToScreen(std::string screenName)

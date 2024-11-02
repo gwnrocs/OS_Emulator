@@ -1,4 +1,5 @@
 #include "process_manager.h"
+#include "consoleManager.h"
 #include <algorithm>
 #include <windows.h>
 #include <iostream>
@@ -25,12 +26,35 @@ namespace ProcessManager {
         return result != processes.end();
     }
 
-    void createProcess(const string& name) {
+    /*void createProcess(const string& name) {
         if (checkProcessExist(name)) return;
         Process newProcess(name);
         processes.push_back(newProcess);
         newProcess.drawConsole();
+    }*/
+
+    void createProcess(const std::string& name) {
+        if (checkProcessExist(name)) {
+            std::cout << "  \nProcess " << name << " already exists." << std::endl;
+            return;  // Exit if the process already exists
+        }
+
+        // Create a shared pointer for the process
+        std::shared_ptr<Process> process = std::make_shared<Process>(name);
+
+        // Create a shared pointer for the screen associated with this process
+        std::shared_ptr<BaseScreen> screen = std::make_shared<BaseScreen>(process, name);
+
+        // Register the screen with the ConsoleManager
+        ConsoleManager::getInstance()->registerScreen(screen);
+
+        // Add the process to the list of processes
+        processes.push_back(*process);
+
+        // Draw the console for the new process
+        process->displayInfo();
     }
+
 
     Process* findProcess(const string& name) {
         for (auto& process : processes) {

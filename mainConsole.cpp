@@ -1,4 +1,5 @@
 #include "mainConsole.h"
+#include "consoleManager.h"
 #include <iostream>
 
 MainConsole::MainConsole() : running(true), initialized(false), scheduler() {
@@ -20,7 +21,6 @@ MainConsole::~MainConsole() {
 
 void MainConsole::onEnabled()
 {
-    this->display();
     this->process();
 }
 
@@ -29,26 +29,26 @@ void MainConsole::display()
     Utils::printHeader();
 }
 
+// get input from user
 void MainConsole::process()
 {
     while (true) {
+        display();
         std::string command;
-        std::cout << "> ";
+        std::cout << " ";
         std::getline(std::cin >> std::ws, command);
         processCommand(command);
     }
 }
 
 void MainConsole::processCommand(std::string command) {
-    while (running) {
-        Utils::printHeader();
-        std::string command;
-        std::getline(std::cin, command);
+        /*std::string command;
+        std::getline(std::cin, command);*/
 
         // Check if the system has been initialized
         if (!initialized && command != "initialize") {
             Utils::printError("You must first run the 'initialize' command.");
-            continue;  // Skip processing the command if the system isn't initialized
+            return;  // Skip processing the command if the system isn't initialized
         }
 
         if (command == "initialize") {
@@ -67,12 +67,24 @@ void MainConsole::processCommand(std::string command) {
         }
         else if (command == "clear") {
             Utils::clearScreen();
-            Utils::printHeader();
+            /*Utils::printHeader();*/
         }
         else if (command.substr(0, 9) == "screen -s") {
             ProcessManager::createProcess(command.substr(10));
+
+           /* std::cout << "\nCreating process for screen " << command.substr(10) << std::endl;
+            std::shared_ptr<Process> process = std::make_shared<Process>(command.substr(10));
+            std::cout << "Creating screen for process " << process->getName() << std::endl;
+            std::shared_ptr<BaseScreen> screen = std::make_shared<BaseScreen>(process, command.substr(10));
+            std::cout << "Screen created." << std::endl;
+            ConsoleManager::getInstance()->registerScreen(screen);
+            std::cout << "Screen registered.\n\n";*/
+
+            //ConsoleManager::getInstance()->switchConsole(screen);
         }
         else if (command.substr(0, 9) == "screen -r") {
+            //ProcessManager::redrawProcess(command.substr(10));
+            ConsoleManager::getInstance()->switchConsole(command.substr(10));
             ProcessManager::redrawProcess(command.substr(10));
         }
         else if (command == "scheduler -test") {
@@ -91,4 +103,3 @@ void MainConsole::processCommand(std::string command) {
             Utils::printError(command);
         }
     }
-}
