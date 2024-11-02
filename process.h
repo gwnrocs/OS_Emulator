@@ -31,6 +31,7 @@ public:
     void updateProcessStatus(ProcessStatus processStatus);
     void executeInstruction();
     ProcessStatus getStatus() const;
+    void displayInfo() const;
 
 private:
     string processName;

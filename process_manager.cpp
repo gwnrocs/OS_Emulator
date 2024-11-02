@@ -1,4 +1,5 @@
 #include "process_manager.h"
+#include "consoleManager.h"
 #include <algorithm>
 #include <windows.h>
 #include <iostream>
@@ -25,12 +26,44 @@ namespace ProcessManager {
         return result != processes.end();
     }
 
-    void createProcess(const string& name) {
+    // TO BE FIXED:
+    bool checkProcessDone(const std::string& name) {
+        auto result = std::find_if(processes.begin(), processes.end(), [name](const Process& obj) {
+            return obj.getName() == name && obj.getStatus() == Process::Done;  // Check if the process is done
+            });
+
+        return result != processes.end();  // Return true if the process is found and done
+    }
+
+    /*void createProcess(const string& name) {
         if (checkProcessExist(name)) return;
         Process newProcess(name);
         processes.push_back(newProcess);
         newProcess.drawConsole();
+    }*/
+
+    void createProcess(const std::string& name) {
+        if (checkProcessExist(name)) {
+            std::cout << "  \nProcess " << name << " already exists." << std::endl;
+            return;  // Exit if the process already exists
+        }
+
+        // Create a shared pointer for the process
+        std::shared_ptr<Process> process = std::make_shared<Process>(name);
+
+        // Create a shared pointer for the screen associated with this process
+        std::shared_ptr<BaseScreen> screen = std::make_shared<BaseScreen>(process, name);
+
+        // Register the screen with the ConsoleManager
+        ConsoleManager::getInstance()->registerScreen(screen);
+
+        // Add the process to the list of processes
+        processes.push_back(*process);
+
+        // Draw the console for the new process
+        process->displayInfo();
     }
+
 
     Process* findProcess(const string& name) {
         for (auto& process : processes) {
@@ -132,6 +165,4 @@ void manageProcesses(CPU& cpu, Scheduler& scheduler, atomic<bool>& stopFlag, int
 
         /*this_thread::sleep_for(chrono::milliseconds(50));*/
     }
-
-    
 }

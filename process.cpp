@@ -29,14 +29,18 @@ Process::Process(string name) {
     totalLines = Utils::generateRandomNumber(min_ins, max_ins);
 }
 
+void Process::displayInfo() const {
+    cout << "\n  =============\n"
+        << "  Process: " << processName << '\n'
+        << "  Current Instruction: " << currentLine << '/' << totalLines << '\n'
+        << "  Created At: " << creationTime << '\n'
+        << "  =============\n\n";
+}
+
 void Process::drawConsole() {
     auto showDetails = [&]() {
-        cout << "  =============\\n"
-            << "  Process: " << processName << '\\n'
-            << "  Current Instruction: " << currentLine << '/' << totalLines << '\\n'
-            << "  Created At: " << creationTime << '\\n'
-            << "  =============\\n";
-        };
+        displayInfo();
+     };
     runScreenLoop(showDetails);
 }
 
