@@ -41,7 +41,8 @@ namespace ProcessManager {
 
     void redrawProcess(const string& name) {
         if (Process* process = findProcess(name)) {
-            process->drawConsole();
+            if (process->getStatus() != 3) { process->drawConsole(); }
+            else { cout << "  Process " << process->getName() << " not found.\n"; }
         }
         else {
             auto showError = []() {

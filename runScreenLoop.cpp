@@ -2,14 +2,25 @@
 
 void runScreenLoop(function<void()> action) {
     string command;
+    bool smi = false;
+
     while (command != "exit") {
-        system("cls");
+        if (smi == false) {
+            system("cls");
+        } else {
+            cout << "\n";
+        }
+        
         action();
-        cout << Colors::Yellow << "  Type 'exit' to return back to main menu: " << Colors::White;
+        cout << Colors::Yellow << "  Enter command: " << Colors::White;
         getline(cin, command);
 
         if (command == "exit") {
             break;
+        }
+        else if ("process-smi") {
+            smi = true;
+            continue;
         }
         else {
             Utils::printError(command);

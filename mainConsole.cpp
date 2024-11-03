@@ -51,13 +51,32 @@ void MainConsole::drawConsole() {
         }
         else if (command == "clear") {
             Utils::clearScreen();
-            Utils::printHeader();
         }
         else if (command.substr(0, 9) == "screen -s") {
+            std::string processName = command.substr(10);
+
+            if (processName.empty() || std::all_of(processName.begin(), processName.end(), ::isspace)) {
+                std::cout << "  Error: No process name provided for 'screen -s'.\n";
+            } else {
             ProcessManager::createProcess(command.substr(10));
+            }
         }
         else if (command.substr(0, 9) == "screen -r") {
-            ProcessManager::redrawProcess(command.substr(10));
+            //TODO: Check if process is done
+            std::string processName = command.substr(10);
+
+            if (processName.empty() || std::all_of(processName.begin(), processName.end(), ::isspace)) {
+                std::cout << "  Error: No process name provided for 'screen -s'.\n";
+            }
+            else {
+                if (ProcessManager::checkProcessExist(command.substr(10)) == 0)
+                {
+                    std::cout << "  Process " << command.substr(10) << " not found.\n";
+                }
+                else {
+                    ProcessManager::redrawProcess(command.substr(10));
+                }
+            }
         }
         else if (command == "scheduler -test") {
             Commands::schedulerTest(*cpu, scheduler);
