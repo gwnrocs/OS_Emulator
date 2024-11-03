@@ -54,7 +54,7 @@ void Scheduler::scheduleProcess(CPU& cpu) {
         ganttChartData = RoundRobin(cpu, quantum_cycles);
     }
 
-    // outGanttChart(ganttChartData, processQueueString);
+    outGanttChart(ganttChartData, processQueueString);
     
 }
 
@@ -131,7 +131,7 @@ vector<vector<ExecutionRecord>> Scheduler::RoundRobin(CPU& cpu, int quantum_cycl
                     ++quantumCycleCounters[coreId];
 
                     
-                    runningProcess.printHelloWorld(coreId); 
+                    // runningProcess.printHelloWorld(coreId); 
 
 
                     if (runningProcess.getStatus() == Process::Done) {

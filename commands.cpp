@@ -15,10 +15,11 @@ void Commands::schedulerTest(CPU& cpu, Scheduler& scheduler) {
 
     thread processThread(manageProcesses, ref(cpu), ref(scheduler), ref(stopFlag), frequency);
     processThread.detach();
+    Utils::printConfirmation("scheduler -test");
 }
 
 void Commands::schedulerStop() {
-    ProcessManager::stopProcessGeneration();
+    ProcessManager::stopProcessGeneration();    
 }
 
 void Commands::screenList() {
