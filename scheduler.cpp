@@ -47,7 +47,7 @@ void Scheduler::scheduleProcess(CPU& cpu) {
     vector<vector<ExecutionRecord>> ganttChartData(num_cpu);
 
     string processQueueString = printProcessQueue();
-    cout << processQueueString << endl;
+    // cout << processQueueString << endl;
 
     if (scheduler_type == "fcfs") {
         FCFS(cpu);
@@ -106,67 +106,76 @@ vector<vector<ExecutionRecord>> Scheduler::RoundRobin(CPU& cpu, int quantum_cycl
     vector<int> quantumCycleCounters(cpu.getNumCores(), 0);
 
     while (!processQueue.empty() || !cpu.areAllCoresIdle()) {
-        for (int i = 0; i < cpu.getNumCores(); ++i) {
-            if (!cpu.getCoresStatus()[i] && !processQueue.empty()) {
-                Process current_process = processQueue.front();
-                processQueue.pop();
-                cpu.assignProcessToCore(current_process, i);
-                current_process.updateProcessStatus(Process::Running);
-
-                ganttChartData[i].push_back({current_process.getName(), i, currentTime, -1});
-                
-                quantumCycleCounters[i] = 0;
-            }
-        }
-
-        for (int i = 0; i < quantum_cycles; ++i) {
+        assignProcessesToIdleCores(cpu, ganttChartData, quantumCycleCounters, currentTime);
+        
+        for (int cycle = 0; cycle < quantum_cycles; ++cycle) {
             ++currentTime;
-
-            for (int coreId = 0; coreId < cpu.getNumCores(); ++coreId) {
-                if (cpu.getCoresStatus()[coreId]) {
-                    Process& runningProcess = cpu.getProcessOnCore(coreId);
-                    runningProcess.executeInstruction();
-                    
-                    ganttChartData[coreId].back().endTime = currentTime; 
-                    ++quantumCycleCounters[coreId];
-
-                    
-                    // runningProcess.printHelloWorld(coreId); 
-
-
-                    if (runningProcess.getStatus() == Process::Done) {
-                        cpu.completeProcess(coreId);
-                        quantumCycleCounters[coreId] = 0;
-                        if (!processQueue.empty()) {
-                            Process current_process = processQueue.front();
-                            processQueue.pop();
-                            cpu.assignProcessToCore(current_process, coreId);
-                            ganttChartData[coreId].push_back({ current_process.getName(), coreId, currentTime, -1 });
-                        }
-
-
-                    } else if (quantumCycleCounters[coreId] >= quantum_cycles) {
-                        // If quantum is exceeded, push the process back to the queue
-                        processQueue.push(runningProcess);
-                        runningProcess.updateProcessStatus(Process::Waiting);
-                        cpu.removeProcess(coreId);
-                        quantumCycleCounters[coreId] = 0; 
-
-                        if (!processQueue.empty()) {
-                            Process current_process = processQueue.front();
-                            processQueue.pop();
-                            cpu.assignProcessToCore(current_process, coreId);
-                            ganttChartData[coreId].push_back({ current_process.getName(), coreId, currentTime, -1});
-                        }
-
-
-                    }
-                }
-            }
+            updateCoreExecutions(cpu, ganttChartData, quantumCycleCounters, currentTime, quantum_cycles);
         }
     }
 
     return ganttChartData;
+}
+
+void Scheduler::assignProcessesToIdleCores(CPU& cpu, vector<vector<ExecutionRecord>>& ganttChartData, 
+                                           vector<int>& quantumCycleCounters, int currentTime) {
+    for (int i = 0; i < cpu.getNumCores(); ++i) {
+        if (!cpu.getCoresStatus()[i] && !processQueue.empty()) {
+            Process currentProcess = processQueue.front();
+            processQueue.pop();
+            cpu.assignProcessToCore(currentProcess, i);
+            currentProcess.updateProcessStatus(Process::Running);
+
+            ganttChartData[i].push_back({currentProcess.getName(), i, currentTime, -1});
+            quantumCycleCounters[i] = 0;
+        }
+    }
+}
+
+void Scheduler::updateCoreExecutions(CPU& cpu, vector<vector<ExecutionRecord>>& ganttChartData, 
+                                     vector<int>& quantumCycleCounters, int currentTime, int quantum_cycles) {
+    for (int coreId = 0; coreId < cpu.getNumCores(); ++coreId) {
+        if (cpu.getCoresStatus()[coreId]) {
+            Process& runningProcess = cpu.getProcessOnCore(coreId);
+            runningProcess.executeInstruction();
+            ganttChartData[coreId].back().endTime = currentTime;
+            ++quantumCycleCounters[coreId];
+
+            if (runningProcess.getStatus() == Process::Done) {
+                handleProcessCompletion(cpu, coreId, ganttChartData, quantumCycleCounters, currentTime);
+            } else if (quantumCycleCounters[coreId] >= quantum_cycles) {
+                handleQuantumExpiration(cpu, coreId, ganttChartData, quantumCycleCounters, currentTime);
+            }
+        }
+    }
+}
+
+void Scheduler::handleProcessCompletion(CPU& cpu, int coreId, vector<vector<ExecutionRecord>>& ganttChartData, 
+                                        vector<int>& quantumCycleCounters, int currentTime) {
+    cpu.completeProcess(coreId);
+    quantumCycleCounters[coreId] = 0;
+    if (!processQueue.empty()) {
+        Process currentProcess = processQueue.front();
+        processQueue.pop();
+        cpu.assignProcessToCore(currentProcess, coreId);
+        ganttChartData[coreId].push_back({ currentProcess.getName(), coreId, currentTime, -1 });
+    }
+}
+
+void Scheduler::handleQuantumExpiration(CPU& cpu, int coreId, vector<vector<ExecutionRecord>>& ganttChartData, 
+                                        vector<int>& quantumCycleCounters, int currentTime) {
+    Process& runningProcess = cpu.getProcessOnCore(coreId);
+    processQueue.push(runningProcess);
+    runningProcess.updateProcessStatus(Process::Waiting);
+    cpu.removeProcess(coreId);
+    quantumCycleCounters[coreId] = 0;
+
+    if (!processQueue.empty()) {
+        Process currentProcess = processQueue.front();
+        processQueue.pop();
+        cpu.assignProcessToCore(currentProcess, coreId);
+        ganttChartData[coreId].push_back({ currentProcess.getName(), coreId, currentTime, -1 });
+    }
 }
 
 

@@ -24,6 +24,15 @@ public:
     void FCFS(CPU& cpu);
     queue<Process> getProcessQueue();
     vector<vector<ExecutionRecord>> RoundRobin(CPU& cpu, int quantum_cycles);
+    void assignProcessesToIdleCores(CPU& cpu, vector<vector<ExecutionRecord>>& ganttChartData, 
+                                     vector<int>& quantumCycleCounters, int currentTime);
+    void updateCoreExecutions(CPU& cpu, vector<vector<ExecutionRecord>>& ganttChartData, 
+                               vector<int>& quantumCycleCounters, int currentTime, int quantum_cycles);
+    void handleProcessCompletion(CPU& cpu, int coreId, vector<vector<ExecutionRecord>>& ganttChartData, 
+                                 vector<int>& quantumCycleCounters, int currentTime);
+    void handleQuantumExpiration(CPU& cpu, int coreId, vector<vector<ExecutionRecord>>& ganttChartData, 
+                                 vector<int>& quantumCycleCounters, int currentTime);
+
     string printProcessQueue();
 
 private:

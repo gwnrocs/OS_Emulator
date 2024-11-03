@@ -1,67 +1,31 @@
 Current Process Queue:
-Process A:  Name: process_57099 | Total Lines: 3
-Process B:  Name: process_20141 | Total Lines: 5
-Process C:  Name: process_23521 | Total Lines: 7
-Process D:  Name: process_41258 | Total Lines: 5
-Process E:  Name: process_29161 | Total Lines: 4
-Process F:  Name: process_02550 | Total Lines: 3
-Process G:  Name: process_83887 | Total Lines: 7
-Process H:  Name: process_92297 | Total Lines: 5
-Process I:  Name: process_85718 | Total Lines: 6
-Process J:  Name: process_83025 | Total Lines: 4
-Burst Times: 3 5 7 5 4 3 7 5 6 4 
+Process A:  Name: process_20197 | Total Lines: 5
+Process B:  Name: process_17271 | Total Lines: 4
+Process C:  Name: process_50408 | Total Lines: 3
+Process D:  Name: process_27044 | Total Lines: 5
+Process E:  Name: process_11501 | Total Lines: 3
+Process F:  Name: process_18726 | Total Lines: 3
+Process G:  Name: process_44883 | Total Lines: 5
+Process H:  Name: process_22794 | Total Lines: 5
+Process I:  Name: process_94729 | Total Lines: 5
+Process J:  Name: process_07530 | Total Lines: 6
+Burst Times: 5 4 3 5 3 3 5 5 5 6 
 Gantt Chart for Core 0:
-Core 0: [0-3] Process: process_57099
-Core 0: [3-6] Process: process_20141
-Core 0: [6-9] Process: process_23521
-Core 0: [9-12] Process: process_41258
-Core 0: [12-15] Process: process_29161
-Core 0: [15-18] Process: process_02550
-Core 0: [18-21] Process: process_83887
-Core 0: [21-24] Process: process_92297
-Core 0: [24-27] Process: process_85718
-Core 0: [27-30] Process: process_83025
-Core 0: [30-32] Process: process_20141
-Core 0: [32-35] Process: process_23521
-Core 0: [35-37] Process: process_41258
-Core 0: [37-38] Process: process_29161
-Core 0: [38-41] Process: process_83887
-Core 0: [41-43] Process: process_92297
-Core 0: [43-46] Process: process_85718
-Core 0: [46-47] Process: process_83025
-Core 0: [47-48] Process: process_23521
-Core 0: [48-49] Process: process_83887
-
-Current Process Queue:
-Process A:  Name: process_57180 | Total Lines: 3
-Process B:  Name: process_62338 | Total Lines: 6
-Process C:  Name: process_94458 | Total Lines: 4
-Process D:  Name: process_78356 | Total Lines: 6
-Process E:  Name: process_38322 | Total Lines: 6
-Process F:  Name: process_40249 | Total Lines: 6
-Process G:  Name: process_76606 | Total Lines: 6
-Process H:  Name: process_02698 | Total Lines: 6
-Process I:  Name: process_52846 | Total Lines: 4
-Process J:  Name: process_83702 | Total Lines: 5
-Burst Times: 3 6 4 6 6 6 6 6 4 5 
-Gantt Chart for Core 0:
-Core 0: [0-3] Process: process_57180
-Core 0: [3-6] Process: process_62338
-Core 0: [6-9] Process: process_94458
-Core 0: [9-12] Process: process_78356
-Core 0: [12-15] Process: process_38322
-Core 0: [15-18] Process: process_40249
-Core 0: [18-21] Process: process_76606
-Core 0: [21-24] Process: process_02698
-Core 0: [24-27] Process: process_52846
-Core 0: [27-30] Process: process_83702
-Core 0: [30-33] Process: process_62338
-Core 0: [33-34] Process: process_94458
-Core 0: [34-37] Process: process_78356
-Core 0: [37-40] Process: process_38322
-Core 0: [40-43] Process: process_40249
-Core 0: [43-46] Process: process_76606
-Core 0: [46-49] Process: process_02698
-Core 0: [49-50] Process: process_52846
-Core 0: [50-52] Process: process_83702
+Core 0: [0-3] Process: process_20197
+Core 0: [3-6] Process: process_17271
+Core 0: [6-9] Process: process_50408
+Core 0: [9-12] Process: process_27044
+Core 0: [12-15] Process: process_11501
+Core 0: [15-18] Process: process_18726
+Core 0: [18-21] Process: process_44883
+Core 0: [21-24] Process: process_22794
+Core 0: [24-27] Process: process_94729
+Core 0: [27-30] Process: process_07530
+Core 0: [30-32] Process: process_20197
+Core 0: [32-33] Process: process_17271
+Core 0: [33-35] Process: process_27044
+Core 0: [35-37] Process: process_44883
+Core 0: [37-39] Process: process_22794
+Core 0: [39-41] Process: process_94729
+Core 0: [41-44] Process: process_07530
 

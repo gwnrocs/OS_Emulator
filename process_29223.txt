@@ -1,8 +1,0 @@
-Process name: process_29223
-
-Logs:
-
-(11/03/2024 05:56:38PM) Core:0 "Hello world from process_29223!"
-(11/03/2024 05:56:38PM) Core:0 "Hello world from process_29223!"
-(11/03/2024 05:56:38PM) Core:0 "Hello world from process_29223!"
-(11/03/2024 05:56:38PM) Core:0 "Hello world from process_29223!"
