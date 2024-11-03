@@ -11,7 +11,7 @@ using namespace std;
 
 void outGanttChart(vector<vector<ExecutionRecord>> ganttChartData, string processQueueString){
     
-    ofstream outFile("gantt_chart.txt");
+    ofstream outFile("gantt_chart.txt", std::ios::app);  // Open file in append mode
     if (outFile.is_open()) {
         outFile << processQueueString;
         for (int coreId = 0; coreId < ganttChartData.size(); ++coreId) {
@@ -47,6 +47,7 @@ void Scheduler::scheduleProcess(CPU& cpu) {
     vector<vector<ExecutionRecord>> ganttChartData(num_cpu);
 
     string processQueueString = printProcessQueue();
+    cout << processQueueString << endl;
 
     if (scheduler_type == "fcfs") {
         FCFS(cpu);
@@ -59,7 +60,6 @@ void Scheduler::scheduleProcess(CPU& cpu) {
 }
 
 void Scheduler::FCFS(CPU& cpu) {
-    printProcessQueue();
     for (int i = 0; i < cpu.getNumCores(); ++i) {
         if (!processQueue.empty() && !cpu.getCoresStatus()[i]) {
             Process process = processQueue.front();
