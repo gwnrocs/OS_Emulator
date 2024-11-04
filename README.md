@@ -1,12 +1,12 @@
 # OS_Emulator
 
-LAPUZ, Salvador
-ORTIZ, China
-ROCO, Gwen Kathleen
-YAO, Benson
-
-Entry class file: main.cpp
-
+LAPUZ, Salvador <br>
+ORTIZ, China<br>
+ROCO, Gwen Kathleen<br>
+YAO, Benson<br>
+<br>
+Entry class file: main.cpp<br>
+<br>
 Instructions to run:
 1. Open "[CSOPESY] MO1.sln"
 2. Type "initialize"
