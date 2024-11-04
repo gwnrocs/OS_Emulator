@@ -10,10 +10,11 @@
 namespace Commands {
     void initialize();
     void screen();
-    void schedulerTest(CPU& cpu, Scheduler& scheduler);
+    void schedulerTest(std::shared_ptr<Scheduler>& scheduler);
+
     void schedulerStop();
-    void screenList();
-    void reportUtil();
+    void screenList(CPU& cpu);
+    void reportUtil(CPU& cpu);
 }
 
 #endif

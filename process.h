@@ -11,7 +11,7 @@ using namespace std;
 class Process {
 public:
     Process();
-    Process(string name);
+    Process(string name, int inputID);
 
     enum ProcessStatus {
         Created,
@@ -20,24 +20,31 @@ public:
         Done
     };
 
-    void displayInfo() const;
     void drawConsole();
-    void printHelloWorld(int coreId);
+    void printHelloWorld(int coreId, int timeToBurst);
 
     const string& getName() const;
+    const int& getID() const;
     const string& getCreationTime() const;
     int getCurrentLine() const;
     int getTotalLines() const;
+    int getCore() const;
+
     void updateCurrentLine(int line);
     void updateProcessStatus(ProcessStatus processStatus);
-    void executeInstruction();
     ProcessStatus getStatus() const;
+    void setTotalLines(int lines);
+    void setName(const string& name);
+    void setCreationTime(const string& time);
+    void setCore(int core);
 
 private:
     string processName;
+    int id;
     int currentLine;
     int totalLines;
     string creationTime;
+    int core;
     ProcessStatus status;
 };
 

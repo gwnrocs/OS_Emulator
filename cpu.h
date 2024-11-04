@@ -10,6 +10,7 @@ private:
     int num_cores;
     vector<bool> coresStatus;
     vector<Process> processInCore;
+    int usedCores;
 
 public:
     CPU(int num_cpu);
@@ -21,8 +22,8 @@ public:
     const int getNumCores() const;
     Process& getProcessOnCore(int coreId); 
     bool areAllCoresIdle() const;
+    int getUsedCores() const;
 
 };
 
 #endif
-

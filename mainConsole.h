@@ -21,7 +21,7 @@ private:
     bool running;
     bool initialized;
     CPU* cpu;  // Use a pointer to CPU instead of a direct object
-    Scheduler scheduler;
+    std::shared_ptr<Scheduler> scheduler;
 };
 
 #endif

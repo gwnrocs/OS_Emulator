@@ -2,29 +2,30 @@
 
 void runScreenLoop(function<void()> action) {
     string command;
-    bool smi = false;
+    bool smi = true;
+    system("cls");
 
     while (command != "exit") {
-        if (smi == false) {
-            system("cls");
-        } else {
-            cout << "\n";
-        }
-        
-        action();
+        if (smi == true) 
+            action();
+
         cout << Colors::Yellow << "  Enter command: " << Colors::White;
-        getline(cin, command);
+        getline(cin, command); 
 
         if (command == "exit") {
             break;
         }
-        else if ("process-smi") {
-            smi = true;
-            continue;
+        else if (command == "process-smi") {
+            smi = true; 
+        }
+        else if (command == "screen -ls") {
+            smi = false;
         }
         else {
-            Utils::printError(command);
+            smi = false;
+            cout << Colors::Red << "\n Command not recognized.\n\n" << Colors::White; 
         }
     }
-    system("cls");
+    system("cls"); 
+    Utils::printHeader();
 }

@@ -9,31 +9,24 @@ void Commands::screen() {
     Utils::printConfirmation("screen");
 }
 
-void Commands::schedulerTest(CPU& cpu, Scheduler& scheduler) {
+void Commands::schedulerTest(std::shared_ptr<Scheduler>& scheduler) {
     int frequency = 10;
-    atomic<bool> stopFlag(false);
+    std::atomic<bool> stopFlag(false);
 
-    thread processThread(manageProcesses, ref(cpu), ref(scheduler), ref(stopFlag), frequency);
-    processThread.detach();
-    Utils::printConfirmation("scheduler -test");
+    std::thread processGenerationThread(ProcessManager::startProcessGeneration, frequency, ref(scheduler), ref(stopFlag));
+    processGenerationThread.detach();
+
+    Utils::printConfirmation("Process generation started.");
 }
 
 void Commands::schedulerStop() {
     ProcessManager::stopProcessGeneration();    
 }
 
-void Commands::screenList() {
-    int num_cpu, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec;
-    string scheduler_type;
-
-    // Load the configuration to get the number of CPU cores
-    loadConfig(num_cpu, scheduler_type, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec);
-
-    CPU cpuInstance(num_cpu);  // Initialize the CPU with the number of cores from config.txt
-    ProcessManager::displayProcessList(cpuInstance);  // Pass the CPU instance to the function
+void Commands::screenList(CPU& cpu) {
+    ProcessManager::displayProcessList(cpu);  
 }
 
-
-void Commands::reportUtil() {
-    Utils::printConfirmation("report-util");
+void Commands::reportUtil(CPU& cpu) {
+    ProcessManager::saveReportToFile(cpu, "csopesy-log.txt");
 }
