@@ -16,12 +16,11 @@ void Commands::schedulerTest(std::shared_ptr<Scheduler>& scheduler, int batchFre
     std::thread processGenerationThread(ProcessManager::startProcessGeneration, frequency, ref(scheduler), ref(stopFlag));
     processGenerationThread.detach();
 
-    cout << Colors::Green << "Generating processes . . . \n" << Colors::White;
+    Utils::printConfirmation("Process generation started.");
 }
 
 void Commands::schedulerStop() {
     ProcessManager::stopProcessGeneration();    
-    cout << Colors::Red << "Stopped generating processes . . . \n" << Colors::White;
 }
 
 void Commands::screenList(CPU& cpu) {
