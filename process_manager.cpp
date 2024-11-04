@@ -76,7 +76,7 @@ namespace ProcessManager {
             }
             else {
                 processCount = 0;
-                cout << "wow";
+                //cout << "wow";
                 //std::this_thread::sleep_for(std::chrono::milliseconds(5000));
             }
         }
