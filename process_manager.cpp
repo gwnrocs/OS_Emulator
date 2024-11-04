@@ -63,7 +63,7 @@ namespace ProcessManager {
         while (!stopFlag) {
             if (processCount < maxProcesses) {
                 if (count == 1) { cout << "second"; }
-                std::this_thread::sleep_for(std::chrono::milliseconds(frequency*80));
+                std::this_thread::sleep_for(std::chrono::milliseconds(frequency));
 
                 std::string newProcessName = generateRandomName();
                 processes.emplace_back(newProcessName, idCounter);
