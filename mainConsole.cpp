@@ -3,8 +3,6 @@
 #include <thread>
 
 MainConsole::MainConsole() : running(true), initialized(false), scheduler(std::make_shared<Scheduler>()) {
-    int num_cpu, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec;
-    std::string scheduler_type;
 }
 
 MainConsole::~MainConsole() {
@@ -32,8 +30,8 @@ void MainConsole::drawConsole() {
         }
 
         if (command == "initialize") {
-            int num_cpu, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec;
-            std::string scheduler_type;
+            num_cpu, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec;
+            scheduler_type;
 
             // Load the config.txt file
             bool configSuccess = loadConfig(num_cpu, scheduler_type, quantum_cycles, min_ins, 
@@ -85,7 +83,7 @@ void MainConsole::drawConsole() {
             }
         }
         else if (command == "scheduler -test") {
-            Commands::schedulerTest(scheduler);
+            Commands::schedulerTest(scheduler, batch_freq);
         }
         else if (command == "screen -ls") {
             Commands::screenList(*cpu);

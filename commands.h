@@ -10,7 +10,7 @@
 namespace Commands {
     void initialize();
     void screen();
-    void schedulerTest(std::shared_ptr<Scheduler>& scheduler);
+    void schedulerTest(std::shared_ptr<Scheduler>& scheduler, int batchFreq);
 
     void schedulerStop();
     void screenList(CPU& cpu);
