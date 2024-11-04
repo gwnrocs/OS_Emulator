@@ -72,7 +72,7 @@ namespace ProcessManager {
 
                 scheduler->addProcessToQueue(newProcessRef);
                 processCount++;
-                std::cout << "Added process #" << processCount << ": " << newProcessName << std::endl;
+                //std::cout << "Added process #" << processCount << ": " << newProcessName << std::endl;
             }
             else {
                 processCount = 0;
@@ -92,8 +92,46 @@ namespace ProcessManager {
         cout << "Core: N/A | ";
         cout << currLine << " / " << totalLine << " | ";
     }
+    void displayProcessList(CPU& cpu) {
+        int totalCores = cpu.getNumCores();
+        int usedCores = cpu.getUsedCores();
+        int availableCores = totalCores - usedCores;
 
-     void displayProcessList(CPU& cpu) {
+        cout << "\n--------------------------------------" << endl;
+        cout << "CPU Utilization: " << (usedCores * 100) / totalCores << "%" << endl;
+        cout << "Cores used: " << usedCores << endl;
+        cout << "Cores available: " << availableCores << endl;
+        cout << "--------------------------------------" << endl;
+        cout << "Running processes:" << endl;
+
+        for (const auto& process : processes) {
+
+            if (process.getStatus() == Process::Running)
+            {
+                cout << process.getName() << " | ";
+                cout << "(" << process.getCreationTime() << ") | ";
+                cout << "Core: " << process.getCore() << " | ";
+                cout << "Status: Running | ";
+                cout << process.getCurrentLine() << " / " << process.getTotalLines() << " | " << endl;
+            }
+        }
+
+        cout << "\nFinished processes:\n";
+        cout << "\n--------------------------------------" << endl;
+
+        for (const auto& process : processes) {
+            if (process.getStatus() == Process::Done)
+            {
+                cout << process.getName() << " | ";
+                cout << "(" << process.getCreationTime() << ") | ";
+                cout << "Finished     ";
+                cout << process.getCurrentLine() << " / " << process.getTotalLines() << " |" << endl;
+            }
+        }
+    }
+
+
+     /*void displayProcessList(CPU& cpu) {
             int totalCores = cpu.getNumCores();
             int usedCores = cpu.getUsedCores();
             int availableCores = totalCores - usedCores;
@@ -133,7 +171,7 @@ namespace ProcessManager {
                 };
 
             runScreenLoop(showProcesses);
-        }
+        }*/
 
     void saveReportToFile(CPU& cpu, const std::string& filename) {
         int totalCores = cpu.getNumCores();
