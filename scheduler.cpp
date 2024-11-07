@@ -7,6 +7,9 @@
 #include <thread>
 #include <chrono>
 #include "process_manager.h"
+#include "ConfigManager.h"
+using Config::configParams;
+
 
 using namespace std;
 
@@ -24,17 +27,12 @@ void Scheduler::addProcessToQueue(Process& process) {
 }
 
 void Scheduler::scheduleProcess(CPU& cpu) {
-    int num_cpu, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec;
-    string scheduler_type;
-
-    
-    loadConfig(num_cpu, scheduler_type, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec);
     string processQueueString = printProcessQueue();
 
-    if (scheduler_type == "fcfs") {
+    if (configParams.scheduler_type == "fcfs") {
         FCFS(cpu);
-    } else if (scheduler_type == "rr") {
-        RoundRobin(cpu, quantum_cycles);
+    } else if (configParams.scheduler_type == "rr") {
+        RoundRobin(cpu, configParams.quantum_cycles);
     }
 
     cpu.runCores();

@@ -1,18 +1,15 @@
 #include "process.h"
 #include <iostream>
+#include "ConfigManager.h"
 
+using Config::configParams;
 using namespace std;
 
 Process::Process() : processName("Unnamed"), currentLine(0), creationTime(Utils::getCurrentTimestamp()) {
-    int num_cpu, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec, id;
-    string scheduler;
     status = Process::Created;
     core = -1;
     id = -1;
-
-    loadConfig(num_cpu, scheduler, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec);
-
-    totalLines = Utils::generateRandomNumber(min_ins, max_ins);
+    totalLines = Utils::generateRandomNumber(configParams.min_ins, configParams.max_ins);
 }
 
 Process::Process(string name, int inputID) {
@@ -22,25 +19,17 @@ Process::Process(string name, int inputID) {
     creationTime = Utils::getCurrentTimestamp();
     status = Process::Created;
     core = -1;
-
-    int num_cpu, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec;
-    string scheduler;
-
-    // Load configuration to set instruction limits
-    loadConfig(num_cpu, scheduler, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec);
-
-    // Set total instructions between the minimum and maximum instruction limits
-    totalLines = Utils::generateRandomNumber(min_ins, max_ins);
+    totalLines = Utils::generateRandomNumber(configParams.min_ins, configParams.max_ins);
 }
 
 void Process::drawConsole() {
     auto showDetails = [&]() {
         if (status != 3) {
-            std::cout << "\n  Process Name: " << processName << "\n";
-            std::cout << "  Time Created: " << creationTime << "\n";
+            cout << "\n  Process Name: " << processName << "\n";
+            cout << "  Time Created: " << creationTime << "\n";
 
             // Convert Status enum to string
-            std::string strStatus = "";
+            string strStatus = "";
             switch (status) {
             case 0: strStatus = "Created"; break;
             case 1: strStatus = "Waiting"; break;
@@ -51,9 +40,9 @@ void Process::drawConsole() {
             cout << "  Status: " << strStatus  << "\n";
 
             //TODO: Change to actual process ID
-            std::cout << "  ID: " << id << "\n";
-            std::cout << "  Current Instruction Line: " << currentLine << "\n";
-            std::cout << "  Lines of Code: " << totalLines << "\n\n";
+            cout << "  ID: " << id << "\n";
+            cout << "  Current Instruction Line: " << currentLine << "\n";
+            cout << "  Lines of Code: " << totalLines << "\n\n";
         }
         else {
             cout << "Finished!";
@@ -67,26 +56,26 @@ void Process::printHelloWorld(int coreId, int timeToBurst) {
     string output = "Hello world from " + processName + "!";
     string fileName = "Logs/" + processName + ".txt";
 
-    std::ifstream infile(fileName);
+    ifstream infile(fileName);
     bool fileExists = infile.good();
 
-    std::ofstream outfile(fileName, fileExists ? std::ios_base::app : std::ios_base::out);
+    ofstream outfile(fileName, fileExists ? ios_base::app : ios_base::out);
 
     if (!outfile) {
-        std::cout << "Error opening file!" << std::endl;
+        cout << "Error opening file!" << endl;
         return;
     }
 
     if (!fileExists) {
-        outfile << "Process name: " << processName << std::endl << std::endl;
-        outfile << "Logs:" << std::endl;
-        outfile << std::endl;
+        outfile << "Process name: " << processName << endl << endl;
+        outfile << "Logs:" << endl;
+        outfile << endl;
     }
 
     for (int i = 0; i < timeToBurst; i++) {
         if (currentLine < totalLines) {
-            std::string timestamp = Utils::getCurrentTimestamp();
-            outfile << "(" << timestamp << ") Core:" << coreId << " \"" << output << "\"" << std::endl;
+            string timestamp = Utils::getCurrentTimestamp();
+            outfile << "(" << timestamp << ") Core:" << coreId << " \"" << output << "\"" << endl;
             currentLine += 1;
         }
         

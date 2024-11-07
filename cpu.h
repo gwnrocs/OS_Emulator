@@ -3,17 +3,20 @@
 #define CPU_H
 
 #include <vector>
+#include <string>
 #include "process.h"
+#include "ConfigManager.h"
+using Config::configParams;
 
 class CPU {
 private:
-    int num_cores;
     vector<bool> coresStatus;
     vector<Process> processInCore;
     int usedCores;
+    
 
 public:
-    CPU(int num_cpu);
+    CPU();
     void runCores();
     void completeProcess(int coreId);
     void removeProcess(int coreId); // for roundRobin

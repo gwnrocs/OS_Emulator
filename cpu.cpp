@@ -3,29 +3,28 @@
 #include "thread"
 #include "chrono"
 #include "process_manager.h"
+#include <string>
 
-CPU::CPU(int num_cpu) {
-    num_cores = num_cpu;
-    coresStatus.resize(num_cpu, false);
-    processInCore.resize(num_cpu);
+#include "ConfigManager.h"
+using Config::configParams;
+
+CPU::CPU() {
+    coresStatus.resize(configParams.num_cpu, false);
+    processInCore.resize(configParams.num_cpu);
     usedCores = 0;
 }
 
 void CPU::runCores() {
-    int num_cpu, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec;
-    string scheduler_type;
 
-    loadConfig(num_cpu, scheduler_type, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec);
-
-    for (int i = 0; i < num_cores; i++) {
+    for (int i = 0; i < configParams.num_cpu; i++) {
         if (coresStatus[i]) {  // Check if the core is busy
-            if (delays_per_exec > 0) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(delays_per_exec));
+            if (configParams.delays_per_exec > 0) {
+                this_thread::sleep_for(chrono::milliseconds(configParams.delays_per_exec));
             }
 
             thread runCoreProcessThread([&]() {
 
-                if(scheduler_type == "fcfs") {
+                if(configParams.scheduler_type == "fcfs") {
                     processInCore[i].printHelloWorld(i , processInCore[i].getTotalLines());
                     completeProcess(i);
                 } else {
@@ -34,7 +33,7 @@ void CPU::runCores() {
             }); 
 
             runCoreProcessThread.detach(); // run parallel
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            this_thread::sleep_for(chrono::milliseconds(100));
         }
     }
 }
@@ -74,11 +73,11 @@ bool CPU::areAllCoresIdle() const {
 
 Process& CPU::getProcessOnCore(int coreId) {
     if (coreId < 0 || coreId >= processInCore.size() || !coresStatus[coreId]) {
-        throw std::out_of_range("Core ID is invalid or core is idle");
+        throw out_of_range("Core ID is invalid or core is idle");
     }
     return processInCore[coreId];
 }
 
 vector<bool> CPU::getCoresStatus() const { return coresStatus; }
-const int CPU::getNumCores() const { return num_cores; }
+const int CPU::getNumCores() const { return configParams.num_cpu; }
 int CPU::getUsedCores() const { return usedCores; }

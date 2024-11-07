@@ -5,6 +5,7 @@
 #include <string>
 #include "utils.h"
 #include "runScreenLoop.h"
+#include "ConfigManager.h"
 
 using namespace std;
 

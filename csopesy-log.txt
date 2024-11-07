@@ -1,0 +1,30 @@
+CPU Utilization: 100%
+Cores used: 16
+Cores available: 0
+--------------------------------------
+Running processes:
+process_87201 | (11/04/2024 10:43:14PM) | Core: 0 | Status: Running | 4000 / 5000 | 
+process_75641 | (11/04/2024 10:43:14PM) | Core: 1 | Status: Running | 4000 / 5000 | 
+process_75339 | (11/04/2024 10:43:14PM) | Core: 2 | Status: Running | 4000 / 5000 | 
+process_36694 | (11/04/2024 10:43:14PM) | Core: 3 | Status: Running | 4000 / 5000 | 
+process_20566 | (11/04/2024 10:43:14PM) | Core: 4 | Status: Running | 4000 / 5000 | 
+process_97699 | (11/04/2024 10:43:14PM) | Core: 5 | Status: Running | 4000 / 5000 | 
+process_37732 | (11/04/2024 10:43:14PM) | Core: 6 | Status: Running | 4000 / 5000 | 
+process_20877 | (11/04/2024 10:43:14PM) | Core: 7 | Status: Running | 4000 / 5000 | 
+process_35600 | (11/04/2024 10:43:14PM) | Core: 8 | Status: Running | 4000 / 5000 | 
+process_79597 | (11/04/2024 10:43:14PM) | Core: 9 | Status: Running | 4000 / 5000 | 
+process_11237 | (11/04/2024 10:43:14PM) | Core: 10 | Status: Running | 4000 / 5000 | 
+process_26759 | (11/04/2024 10:43:14PM) | Core: 11 | Status: Running | 4000 / 5000 | 
+process_11306 | (11/04/2024 10:43:14PM) | Core: 12 | Status: Running | 4000 / 5000 | 
+process_23195 | (11/04/2024 10:43:14PM) | Core: 13 | Status: Running | 4000 / 5000 | 
+process_20763 | (11/04/2024 10:43:14PM) | Core: 14 | Status: Running | 4000 / 5000 | 
+process_35252 | (11/04/2024 10:43:14PM) | Core: 15 | Status: Running | 4000 / 5000 | 
+
+Finished processes:
+
+--------------------------------------
+process_28338 | (11/04/2024 10:43:13PM) | Finished     5000 / 5000 |
+process_16142 | (11/04/2024 10:43:13PM) | Finished     5000 / 5000 |
+process_54544 | (11/04/2024 10:43:13PM) | Finished     5000 / 5000 |
+process_61934 | (11/04/2024 10:43:13PM) | Finished     5000 / 5000 |
+process_68054 | (11/04/2024 10:43:13PM) | Finished     5000 / 5000 |

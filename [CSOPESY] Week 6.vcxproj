@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="commands.cpp" />
+    <ClCompile Include="ConfigManager.cpp" />
     <ClCompile Include="cpu.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainConsole.cpp" />
@@ -140,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="commands.h" />
+    <ClInclude Include="ConfigManager.h" />
     <ClInclude Include="cpu.h" />
     <ClInclude Include="mainConsole.h" />
     <ClInclude Include="process.h" />

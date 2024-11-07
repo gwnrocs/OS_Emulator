@@ -30,6 +30,4 @@ namespace Utils {
     void printHeader();
 }
 
-bool loadConfig(int& num_cpu, string& scheduler, int& quantum_cycles, int& min_ins, int& max_ins, int& batch_freq, int& delays_per_exec);
-bool configFileExists();
 #endif

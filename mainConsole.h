@@ -9,6 +9,9 @@
 #include "scheduler.h"
 #include "process_manager.h"
 #include "commands.h"
+#include "ConfigManager.h"
+
+using Config::configParams;
 
 class MainConsole {
 public:
@@ -18,13 +21,11 @@ public:
     void drawConsole();
 
 private:
+    
     bool running;
     bool initialized;
     CPU* cpu;  // Use a pointer to CPU instead of a direct object
-    std::shared_ptr<Scheduler> scheduler;
-    int num_cpu, quantum_cycles, min_ins, max_ins, batch_freq, delays_per_exec;
-    std::string scheduler_type;
-
+    shared_ptr<Scheduler> scheduler;
 };
 
 #endif
