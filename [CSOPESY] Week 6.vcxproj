@@ -131,6 +131,7 @@
     <ClCompile Include="commands.cpp" />
     <ClCompile Include="ConfigManager.cpp" />
     <ClCompile Include="cpu.cpp" />
+    <ClCompile Include="flatMemoryAllocator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainConsole.cpp" />
     <ClCompile Include="process.cpp" />
@@ -143,6 +144,8 @@
     <ClInclude Include="commands.h" />
     <ClInclude Include="ConfigManager.h" />
     <ClInclude Include="cpu.h" />
+    <ClInclude Include="flatMemoryAllocator.h" />
+    <ClInclude Include="IMemoryAllocator.h" />
     <ClInclude Include="mainConsole.h" />
     <ClInclude Include="process.h" />
     <ClInclude Include="process_manager.h" />
