@@ -46,8 +46,13 @@ std::string FlatMemoryAllocator::visualizeMemory()
 }
 
 void FlatMemoryAllocator::initializeMemory() {
-	std::fill(memory.begin(), memory.end(), '.'); // '.' represents unallocated memory
-	std::fill(allocationMap.begin(), allocationMap.end(), false);
+	//std::fill(memory.begin(), memory.end(), '.'); // '.' represents unallocated memory
+	//std::fill(allocationMap.begin(), allocationMap.end(), false);
+
+	for (size_t i = 0; i < maximumSize; ++i) {
+		memory[i] = '.'; // '.' represents unallocated memory
+		allocationMap[0] = false;
+	}
 }
 
 bool FlatMemoryAllocator::canAllocateAt(size_t index, size_t size) {
