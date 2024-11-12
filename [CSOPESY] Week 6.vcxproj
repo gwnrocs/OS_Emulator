@@ -134,6 +134,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainConsole.cpp" />
     <ClCompile Include="process.cpp" />
+    <ClCompile Include="ProcessGenerationThread.cpp" />
     <ClCompile Include="process_manager.cpp" />
     <ClCompile Include="runScreenLoop.cpp" />
     <ClCompile Include="scheduler.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="cpu.h" />
     <ClInclude Include="mainConsole.h" />
     <ClInclude Include="process.h" />
+    <ClInclude Include="ProcessGenerationThread.h" />
     <ClInclude Include="process_manager.h" />
     <ClInclude Include="runScreenLoop.h" />
     <ClInclude Include="scheduler.h" />

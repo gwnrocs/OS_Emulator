@@ -3,6 +3,7 @@
 #include <thread>
 #include <string>
 #include "ConfigManager.h"
+
 using Config::configParams;
 
 
@@ -15,7 +16,7 @@ MainConsole::MainConsole() : running(true), initialized(false), scheduler(make_s
 
 MainConsole::~MainConsole() {
     if (cpu != nullptr) {
-        delete cpu;  // Free the dynamically allocated CPU object
+        delete cpu; 
     }
 }
 
@@ -32,7 +33,6 @@ void MainConsole::drawConsole() {
         string command;
         getline(cin, command);
 
-        // Check if the system has been initialized
         if (!initialized && command != "initialize") {
             Utils::printError("You must first run the 'initialize' command.");
             continue; 

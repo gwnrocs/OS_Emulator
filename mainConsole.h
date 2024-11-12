@@ -16,7 +16,7 @@ using Config::configParams;
 class MainConsole {
 public:
     MainConsole();
-    ~MainConsole(); // Destructor to delete the dynamically allocated CPU object
+    ~MainConsole(); 
     void printHeading();
     void drawConsole();
 
@@ -24,7 +24,7 @@ private:
     
     bool running;
     bool initialized;
-    CPU* cpu;  // Use a pointer to CPU instead of a direct object
+    CPU* cpu;  
     shared_ptr<Scheduler> scheduler;
 };
 

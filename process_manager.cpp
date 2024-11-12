@@ -34,6 +34,14 @@ namespace ProcessManager {
         scheduler->addProcessToQueue(newProcessRef);  
     }
 
+    void createScheduledProcess(std::shared_ptr<Scheduler>& scheduler) {
+        string newProcessName = generateRandomName();
+        processes.emplace_back(newProcessName, idCounter);
+        idCounter++;
+        Process& newProcessRef = processes.back();
+        scheduler->addProcessToQueue(newProcessRef);  
+    }
+
     Process* findProcess(const string& name) {
         for (auto& process : processes) {
             if (process.getName() == name) return &process;
@@ -52,38 +60,6 @@ namespace ProcessManager {
                 };
             runScreenLoop(showError);
         }
-    }
-
-    void startProcessGeneration(int frequency, std::shared_ptr<Scheduler>& scheduler, 
-                                std::atomic<bool>& stopFlag) {
-        int processCount = 0;
-        std::vector<Process> processes;
-        int count = 0;
-
-        while (!stopFlag) {
-            if (processCount < maxProcesses) {
-                if (count == 1) { cout << "second"; }
-                std::this_thread::sleep_for(std::chrono::milliseconds(frequency));
-
-                std::string newProcessName = generateRandomName();
-                processes.emplace_back(newProcessName, idCounter);
-                idCounter++;
-                Process& newProcessRef = processes.back();
-
-                scheduler->addProcessToQueue(newProcessRef);
-                processCount++;
-                //std::cout << "Added process #" << processCount << ": " << newProcessName << std::endl;
-            }
-            else {
-                processCount = 0;
-                //cout << "wow";
-                //std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-            }
-        }
-    }
-
-    void stopProcessGeneration() {
-        stopFlag = true;
     }
 
     void printProcess(std::string processName, std::string creationTime, int currLine, int totalLine){
