@@ -30,6 +30,7 @@ public:
     int getCurrentLine() const;
     int getTotalLines() const;
     int getCore() const;
+    size_t getMemoryRequired() const;
 
     void updateCurrentLine(int line);
     void updateProcessStatus(ProcessStatus processStatus);
@@ -47,6 +48,7 @@ private:
     string creationTime;
     int core;
     ProcessStatus status;
+    size_t memoryRequired;
 };
 
 #endif

@@ -9,6 +9,7 @@ Process::Process() : processName("Unnamed"), currentLine(0), creationTime(Utils:
     status = Process::Created;
     core = -1;
     id = -1;
+    memoryRequired = 500;
     totalLines = Utils::generateRandomNumber(configParams.min_ins, configParams.max_ins);
 }
 
@@ -19,6 +20,7 @@ Process::Process(string name, int inputID) {
     creationTime = Utils::getCurrentTimestamp();
     status = Process::Created;
     core = -1;
+    memoryRequired = 500;
     totalLines = Utils::generateRandomNumber(configParams.min_ins, configParams.max_ins);
 }
 
@@ -94,6 +96,7 @@ const string& Process::getCreationTime() const { return creationTime; }
 int Process::getCurrentLine() const { return currentLine; }
 int Process::getTotalLines() const { return totalLines; }
 int Process::getCore() const { return core; }
+size_t Process::getMemoryRequired() const { return memoryRequired; }
 
 void Process::updateCurrentLine(int line) { currentLine = line; }
 void Process::updateProcessStatus(ProcessStatus processStatus) { status = processStatus; }
