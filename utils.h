@@ -11,6 +11,8 @@
 #include <windows.h>
 #include <fstream>
 
+#include "ConfigManager.h"
+
 using namespace std;
 
 namespace Colors {
@@ -18,6 +20,7 @@ namespace Colors {
     const string Green = "\033[0;32m";
     const string Red = "\033[0;31m";
     const string White = "\033[0m";
+    const string Grey = "\033[0;90m";
 }
 
 namespace Utils {
@@ -28,6 +31,7 @@ namespace Utils {
     void clearScreen();
     void printError(const string& command);
     void printHeader();
+    void printConfig();
 }
 
 #endif

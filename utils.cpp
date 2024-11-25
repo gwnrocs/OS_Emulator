@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "ConfigManager.h"
 
 int Utils::generateRandomNumber(int lower, int upper) {
     random_device rd;
@@ -49,4 +50,26 @@ void Utils::printHeader() {
     printAscii();
     cout << Colors::Green << "  Hello, Welcome to CSOPESY commandline!\n";
     cout << Colors::Yellow << "  Type 'exit' to quit, 'clear' to clear the screen\n\n" << Colors::White;
+}
+
+void Utils::printConfig() {
+    cout << Colors::Grey << "  Current Configuration:" << Colors::White << endl;
+    cout << "  Number of CPUs: " << Config::configParams.num_cpu << endl;
+
+    if (Config::configParams.scheduler_type == "rr") {
+        cout << "  Scheduler Type: Round Robin" << endl;
+        cout << "  Quantum Cycles: " << Config::configParams.quantum_cycles << endl;
+    } else {
+        cout << "  Scheduler Type: First Come First Serve" << endl;
+    }
+
+    cout << "  Batch Process Frequency: " << Config::configParams.batch_freq << endl;
+    cout << "  Minimum Instructions: " << Config::configParams.min_ins << endl;
+    cout << "  Maximum Instructions: " << Config::configParams.max_ins << endl;
+    cout << "  Delays Per Execution: " << Config::configParams.delays_per_exec << endl;
+    cout << "  Maximum Overall Memory: " << Config::configParams.max_overall_mem << " KB" << endl;
+    cout << "  Memory Per Frame: " << Config::configParams.mem_per_frame << " KB" << endl;
+    cout << "  Minimum Memory Per Process: " << Config::configParams.min_mem_per_proc << " KB" << endl;
+    cout << "  Maximum Memory Per Process: " << Config::configParams.max_mem_per_proc << " KB" << endl << endl;
+    cout << Colors::Grey << "  ---------------------------------- " << Colors::White<< endl;
 }

@@ -122,5 +122,4 @@ namespace Config {
             return false;
         }
     }
-
 } // namespace Config

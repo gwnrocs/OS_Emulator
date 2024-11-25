@@ -6,13 +6,9 @@
 
 using Config::configParams;
 
-
-
 using namespace std;
 
-MainConsole::MainConsole() : running(true), initialized(false), scheduler(make_shared<Scheduler>()) {
-
-}
+MainConsole::MainConsole() : running(true), initialized(false), scheduler(make_shared<Scheduler>()) {}
 
 MainConsole::~MainConsole() {
     if (cpu != nullptr) {
@@ -29,6 +25,9 @@ void MainConsole::drawConsole() {
     Utils::printHeader();
 
     while (running) {
+        if (initialized)
+            Utils::printConfig();
+
         cout << "\n  Enter a command: ";
         string command;
         getline(cin, command);
