@@ -20,11 +20,17 @@ private:
     std::shared_ptr<Memory> memory;
     std::vector<std::shared_ptr<Screen>> screens;
 
-    bool hasInitialized = false;
+    bool initialized = false;
     bool hasQuit = false;
     bool toStartCreatingProcess = false;
     bool isMainMenu = true;
+    bool showConfig = false;
 
+    int nCpuToInitialize = -1;
+    std::string schedulerType = "";
+    int quantumCycles = -1;
+    int maxMemory = -1;
+    int delayExecFake = -1;
     int freqProcess = -1;
     int freq = 0;
     int minCommand = -1;
@@ -53,6 +59,7 @@ private:
     void handleScreenCommand(const std::string& option, const std::string& process_name);
     void listScreens(bool debug = false);
     void joinAllThreads();
+    void printConfig();
 
 public:
     Console();
