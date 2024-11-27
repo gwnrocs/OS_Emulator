@@ -1,12 +1,7 @@
-#include<iostream>
-#include<string>
-#include "MainConsole.h"
+#include "Console.h"
 
 int main() {
-    MainConsole* mainConsole = new MainConsole();
-
-    mainConsole->drawConsole();   
-
-    delete mainConsole;  
+    Console console;
+    console.start();
     return 0;
 }

@@ -128,32 +128,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="commands.cpp" />
-    <ClCompile Include="ConfigManager.cpp" />
-    <ClCompile Include="cpu.cpp" />
-    <ClCompile Include="flatMemoryAllocator.cpp" />
+    <ClCompile Include="Console.cpp" />
+    <ClCompile Include="Core.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="mainConsole.cpp" />
-    <ClCompile Include="process.cpp" />
-    <ClCompile Include="ProcessGenerationThread.cpp" />
-    <ClCompile Include="process_manager.cpp" />
-    <ClCompile Include="runScreenLoop.cpp" />
-    <ClCompile Include="scheduler.cpp" />
-    <ClCompile Include="utils.cpp" />
+    <ClCompile Include="Memory.cpp" />
+    <ClCompile Include="Schedule.cpp" />
+    <ClCompile Include="Screen.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="commands.h" />
-    <ClInclude Include="ConfigManager.h" />
-    <ClInclude Include="cpu.h" />
-    <ClInclude Include="flatMemoryAllocator.h" />
-    <ClInclude Include="IMemoryAllocator.h" />
-    <ClInclude Include="mainConsole.h" />
-    <ClInclude Include="process.h" />
-    <ClInclude Include="ProcessGenerationThread.h" />
-    <ClInclude Include="process_manager.h" />
-    <ClInclude Include="runScreenLoop.h" />
-    <ClInclude Include="scheduler.h" />
-    <ClInclude Include="utils.h" />
+    <ClInclude Include="Console.h" />
+    <ClInclude Include="Core.h" />
+    <ClInclude Include="Memory.h" />
+    <ClInclude Include="Schedule.h" />
+    <ClInclude Include="Screen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
