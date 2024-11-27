@@ -1,16 +1,18 @@
 #include "Schedule.h"
-#include <iostream>
+#include <iostream>\
+
+using namespace std;
 
 // Constructor
 Schedule::Schedule() : schedulingAlgorithm(FCFS) {}
 
 // Initialize scheduler
-int Schedule::initialize_scheduler(const std::string& algoSelected, std::shared_ptr<Memory> memory) {
+int Schedule::initializeScheduler(const std::string& algoSelected, std::shared_ptr<Memory> memory) {
     std::string algo = algoSelected.substr(1, algoSelected.length() - 2);
 
     if (algo == "fcfs") {
         schedulingAlgorithm = FCFS;
-        initialize_memory(memory);
+        initializeMemory(memory);
         return 0;
     }
     else if (algo == "rr") {
@@ -23,22 +25,22 @@ int Schedule::initialize_scheduler(const std::string& algoSelected, std::shared_
 }
 
 // Initialize memory
-void Schedule::initialize_memory(std::shared_ptr<Memory> memory) {
+void Schedule::initializeMemory(std::shared_ptr<Memory> memory) {
     this->memory = memory;
 }
 
 // Run scheduler
-void Schedule::run_scheduler() {
+void Schedule::startScheduler() {
     if (schedulingAlgorithm == FCFS) {
-        run_fcfs();
+        executeFCFS();
     }
     else if (schedulingAlgorithm == RR) {
-        run_rr();
+        executeRR();
     }
 }
 
 // FCFS scheduling algorithm
-void Schedule::run_fcfs() {
+void Schedule::executeFCFS() {
     for (auto& core : coresAvailable) {
         if (!readyQueue.empty()) {
             if (core->process_to_execute == nullptr) {  // Core is free
@@ -58,7 +60,7 @@ void Schedule::run_fcfs() {
 }
 
 // Round-Robin scheduling algorithm
-void Schedule::run_rr() {
+void Schedule::executeRR() {
     for (auto& core : coresAvailable) {
         if (core->process_to_execute == nullptr) {
             if (!readyQueue.empty()) {
@@ -93,24 +95,24 @@ void Schedule::run_rr() {
 
 // Debug scheduler state
 void Schedule::debugSchedulerState() {
-    std::cout << "==== Scheduler State ====" << std::endl;
+    cout << "==== Scheduler State ====" << endl;
 
-    std::cout << "Ready Queue:" << std::endl;
+    cout << "Ready Queue:" << endl;
     for (const auto& screen : readyQueue) {
-        std::cout << " - " << screen->processName << " (PID: " << screen->processId << ")" << std::endl;
+        cout << " - " << screen->processName << " (PID: " << screen->processId << ")" << endl;
     }
 
-    std::cout << "Core States:" << std::endl;
+    cout << "Core States:" << endl;
     for (const auto& core : coresAvailable) {
-        std::cout << "Core " << core->id << ": ";
+        cout << "Core " << core->id << ": ";
         if (core->process_to_execute) {
-            std::cout << "Running process " << core->process_to_execute->processName;
+            cout << "Running process " << core->process_to_execute->processName;
         }
         else {
-            std::cout << "Free";
+            cout << "Free";
         }
-        std::cout << std::endl;
+        cout << endl;
     }
 
-    std::cout << "=========================" << std::endl;
+    cout << "=========================" << endl;
 }

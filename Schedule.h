@@ -21,12 +21,12 @@ public:
 
     Schedule();
 
-    int initialize_scheduler(const std::string& algo, std::shared_ptr<Memory> memory);
-    void run_scheduler();
+    int initializeScheduler(const std::string& algo, std::shared_ptr<Memory> memory);
+    void startScheduler();
     void debugSchedulerState();
-    void run_rr();
-    void run_fcfs();
-    void initialize_memory(std::shared_ptr<Memory> memory);
+    void executeRR();
+    void executeFCFS();
+    void initializeMemory(std::shared_ptr<Memory> memory);
 };
 
 #endif

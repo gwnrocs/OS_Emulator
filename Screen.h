@@ -12,7 +12,7 @@ public:
         READY,
         RUNNING,
         WAITING,
-        FINISHED
+        DONE
     };
 
     std::string processName;

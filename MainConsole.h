@@ -21,8 +21,8 @@ private:
     std::vector<std::shared_ptr<Screen>> screens;
 
     bool initialized = false;
-    bool hasQuit = false;
-    bool toStartCreatingProcess = false;
+    bool isRunning = false;
+    bool allowProcessCreation = false;
     bool isMainMenu = true;
     bool showConfig = false;
 
@@ -62,12 +62,14 @@ private:
     void listScreens(bool debug = false);
     void joinAllThreads();
     void printConfig();
+    void generateReportUtil();
+    void generateProcessSMI();
 
 public:
     MainConsole();
-    void start();
+    void drawConsole();
     void initialize();
-    void scheduler_test();
+    void schedulerTest();
     void simulateCpuCycle();
 };
 

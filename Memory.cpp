@@ -125,7 +125,7 @@ void Memory::deallocate(std::shared_ptr<Screen> screen)
             throw;
     }
     catch (exception e) {
-        std::cout << "Tried to deallocate a process that does not exist: " << e.what() << std::endl;
+        cout << "Tried to deallocate a process that does not exist: " << e.what() << endl;
     }
 }
 

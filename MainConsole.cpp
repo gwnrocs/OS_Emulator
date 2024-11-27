@@ -9,11 +9,12 @@ using namespace std;
 
 MainConsole::MainConsole() : isMainMenu(true) {}
 
-void MainConsole::start() {
+void MainConsole::drawConsole() {
     Utils::printHeader();
     string command, option, processName;
+    isRunning = true;
 
-    while (true) {
+    while (isRunning) {
         if (showConfig) {
             printConfig();
             showConfig = false;
@@ -32,7 +33,6 @@ void MainConsole::start() {
         if (command == "initialize") {
             if (initialized) {
                 // Stop all threads and clean up
-                hasQuit = true;
                 joinAllThreads();
 
                 // Reset all states
@@ -40,9 +40,8 @@ void MainConsole::start() {
                 scheduler.readyQueue.clear();
                 scheduler.coresAvailable.clear();
                 listOfCoreThreads.clear();
-                hasQuit = false;
 
-                cout << "  System stopped. Reinitializing..." << endl;
+                cout << "System stopped. Reinitializing..." << endl;
             }
 
             initialize(); // Call the initialize function to reinitialize the system
@@ -52,15 +51,14 @@ void MainConsole::start() {
         }
 
         else if (command == "exit") {
-            hasQuit = true;
+            isRunning = false;
             joinAllThreads();
 
-            cout << "Exiting program... Goodbye!" << endl;
+            cout << Colors::Red << "\nExiting program . . . " << Colors::White << endl;
             break;
         }
 
         else if (command.find("screen") == 0) {
-
             std::istringstream iss(command.substr(6));
             iss >> option >> processName;
 
@@ -72,91 +70,27 @@ void MainConsole::start() {
         }
         else if (command == "report-util")
         {
-            ofstream fileOPESY;
-            fileOPESY.open("csopesy-log.txt");
-
-
-            // copied and pasted from screen -ls command
-            int coresUsed = checkCoresUsed();
-            fileOPESY << "--------------------------------------" << endl 
-                      << "CPU Utilization: " << std::round(((coresUsed * 1.0) / scheduler.coresAvailable.size()) * 100) << "%" << endl
-                      << "Cores used: " << coresUsed << endl
-                      << "Cores available: " << scheduler.coresAvailable.size() - coresUsed << endl << endl
-                      << "--------------------------------------" << endl;
-
-            if (screens.empty()) {
-                fileOPESY << "No screens attached." << endl;
-                Utils::printDivider();
-            }
-            else {
-
-                fileOPESY << "Running processes: " << endl;
-
-                for (const auto& screen : screens) {
-                    if (screen->status == Screen::RUNNING)
-                    {
-                        fileOPESY << screen->processName << "    ";
-                        fileOPESY << "(" + screen->creationTime + ")    ";
-                        fileOPESY << "Core: " + std::to_string(screen->core_id_assigned) << "    ";
-                        fileOPESY << screen->currentLine << " / " << screen->totalLines << "\n";
-                    }
-                }
-
-                fileOPESY << endl;
-                fileOPESY << "Finished processes: " << endl;
-
-                for (const auto& screen : screens) {
-                    if (screen->status == Screen::FINISHED)
-                    {
-                        fileOPESY << screen->processName << "    ";
-                        fileOPESY << "(" + screen->creationTime + ")  ";
-                        fileOPESY << "Finished     ";
-                        fileOPESY << screen->currentLine << " / " << screen->totalLines << "\n";
-                    }
-                }
-                fileOPESY << "--------------------------------------" << endl;
-
-            }
-            fileOPESY.close();
-
-            cout << "\nSuccessfully printed report-util.\n" << endl;
+            generateReportUtil();
+            cout << Colors::Green << "\nSuccessfully printed report-util (csopesy-log.txt)\n" << Colors::White << endl;
         }
         else if (command == "scheduler -test") {
-            if (toStartCreatingProcess)
+            if (allowProcessCreation)
                 cout << Colors::Green << "\nProcess generation is already activated . . .\n\n" << Colors::White;
-            
             else 
-                toStartCreatingProcess = true;
+                allowProcessCreation = true;
                 cout << Colors::Green << "\nProcess generation has started . . .\n\n" << Colors::White;
         }
-
         else if (command == "scheduler -stop") {
-            if (!toStartCreatingProcess)
+            if (!allowProcessCreation)
                 cout << Colors::Red << "\nProcess generation is not activated . . .\n\n" << Colors::White;
             else {
-                toStartCreatingProcess = false;
+                allowProcessCreation = false;
                 cout << Colors::Red << "\nProcess generation has stopped . . .\n\n" << Colors::White;
             }
         }
 
         else if (command == "process-smi") {
-            int coresUsed = checkCoresUsed();
-            int memoryUsage = memory->getMemoryUsage();
-            cout << endl;
-            cout << "-------------------------------------------------------------" << endl;
-            cout << "|                       PROCESS-SMI                         |" << endl;
-            cout << "-------------------------------------------------------------" << endl;
-            cout << "CPU-Util: " << std::round(((coresUsed * 1.0) / scheduler.coresAvailable.size()) * 100) << "%" << endl;
-            cout << "Memory Usage: " << memoryUsage << "KB / " << memory->maxMemory << "KB" << endl;
-            cout << "Memory Util: " << std::round(((memoryUsage * 1.0) / memory->maxMemory) * 100) << "%" << endl << endl;
-            cout << "==============================================================" << endl;
-            cout << "Running processes and memory usage:" << endl;
-            cout << "-------------------------------------------------------------" << endl;
-
-            for (int i = 0; i < memory->processInMemory.size(); i++)
-                cout << memory->processInMemory[i]->processName << " " << memory->processInMemory[i]->memory_to_occupy << "KB" << endl;
-
-            cout << "-------------------------------------------------------------" << endl;
+            generateProcessSMI();
         }
 
         else if (command == "vmstat") {
@@ -180,6 +114,167 @@ void MainConsole::start() {
     }
 }
 
+void MainConsole::initialize() {
+    ifstream readConfigFile("config.txt");
+
+    if (!readConfigFile.is_open()) {
+        cout << "Unable to open config.txt file." << endl;
+    }
+    else {
+        string cpuOption, configInput;
+        std::istringstream iss;
+
+        try {
+            // Read number of CPUs
+            getline(readConfigFile, cpuOption);
+            iss.str(cpuOption);
+            iss >> cpuOption >> configInput;
+            iss.clear();
+
+            if (cpuOption != "num-cpu") {
+                throw std::invalid_argument("Missing num-cpu option");
+            }
+            nCpuToInitialize = stoi(configInput);
+
+            // Read scheduler type
+            getline(readConfigFile, cpuOption);
+            iss.str(cpuOption);
+            iss >> cpuOption >> configInput;
+            iss.clear();
+
+            if (cpuOption != "scheduler") {
+                throw std::invalid_argument("Missing scheduler option");
+            }
+            schedulerType = configInput;
+
+            // Read quantum cycles
+            getline(readConfigFile, cpuOption);
+            iss.str(cpuOption);
+            iss >> cpuOption >> configInput;
+            iss.clear();
+
+            if (cpuOption != "quantum-cycles") {
+                throw std::invalid_argument("Missing quantum-cycles option");
+            }
+            quantumCycles = stoi(configInput);
+
+            // Read batch process frequency
+            getline(readConfigFile, cpuOption);
+            iss.str(cpuOption);
+            iss >> cpuOption >> configInput;
+            iss.clear();
+
+            if (cpuOption != "batch-process-freq") {
+                throw std::invalid_argument("Missing batch-process-freq option");
+            }
+            freqProcess = stoi(configInput);
+
+            // Read minimum instructions
+            getline(readConfigFile, cpuOption);
+            iss.str(cpuOption);
+            iss >> cpuOption >> configInput;
+            iss.clear();
+
+            if (cpuOption != "min-ins") {
+                throw std::invalid_argument("Missing min-ins option");
+            }
+            minCommand = stoi(configInput);
+
+            // Read maximum instructions
+            getline(readConfigFile, cpuOption);
+            iss.str(cpuOption);
+            iss >> cpuOption >> configInput;
+            iss.clear();
+
+            if (cpuOption != "max-ins") {
+                throw std::invalid_argument("Missing max-ins option");
+            }
+            maxCommand = stoi(configInput);
+
+            // Read delays per execution
+            getline(readConfigFile, cpuOption);
+            iss.str(cpuOption);
+            iss >> cpuOption >> configInput;
+            iss.clear();
+
+            if (cpuOption != "delays-per-exec") {
+                throw std::invalid_argument("Missing delays-per-exec option");
+            }
+            delayExecFake = stoi(configInput);
+            delayExec = stoi(configInput) + 1;
+
+            // Read maximum overall memory
+            getline(readConfigFile, cpuOption);
+            iss.str(cpuOption);
+            iss >> cpuOption >> configInput;
+            iss.clear();
+
+            if (cpuOption != "max-overall-mem") {
+                throw std::invalid_argument("Missing max-overall-mem option");
+            }
+            maxMemory = stoi(configInput);
+
+            // Read memory per frame
+            getline(readConfigFile, cpuOption);
+            iss.str(cpuOption);
+            iss >> cpuOption >> configInput;
+            iss.clear();
+
+            if (cpuOption != "mem-per-frame") {
+                throw std::invalid_argument("Missing mem-per-frame option");
+            }
+            memoryPerFrame = stoi(configInput);
+
+            // Read minimum memory per process
+            getline(readConfigFile, cpuOption);
+            iss.str(cpuOption);
+            iss >> cpuOption >> configInput;
+            iss.clear();
+
+            if (cpuOption != "min-mem-per-proc") {
+                throw std::invalid_argument("Missing min-mem-per-proc option");
+            }
+            minMemPerProc = stoi(configInput);
+
+            // Read maximum memory per process
+            getline(readConfigFile, cpuOption);
+            iss.str(cpuOption);
+            iss >> cpuOption >> configInput;
+            iss.clear();
+
+            if (cpuOption != "max-mem-per-proc") {
+                throw std::invalid_argument("Missing max-mem-per-proc option");
+            }
+            maxMemPerProc = stoi(configInput);
+
+            // Initialize memory and cores
+            memory = make_shared<Memory>();
+            initializeCores(nCpuToInitialize, delayExec, quantumCycles, memory);
+
+            if (maxMemory == memoryPerFrame) {
+                memory->initialize(maxMemory, memoryPerFrame, 0);
+            }
+            else {
+                memory->initialize(maxMemory, memoryPerFrame, 1);
+            }
+
+            if (scheduler.initializeScheduler(schedulerType, memory)) {
+                throw std::invalid_argument("Invalid scheduler configuration");
+            }
+
+            initialized = true;
+            Utils::printConfirmation("System initialized.");
+            showConfig = true;
+
+            // Start CPU simulation thread
+            cpuCycleThreadHolder = std::thread(&MainConsole::simulateCpuCycle, this);
+
+        }
+        catch (const std::exception& e) {
+            cout << "Error reading config.txt: " << e.what() << endl;
+        }
+    }
+}
 
 void MainConsole::initializeCores(int numCores, int delay, int quantumCycles, std::shared_ptr<Memory> memory)
 {
@@ -264,7 +359,7 @@ void MainConsole::attachScreen(const string& processName) {
     for (int i = 0; i < screens.size(); i++) {
         if (screens[i]->processName == processName) {
 
-            if (screens[i]->status == Screen::FINISHED)
+            if (screens[i]->status == Screen::DONE)
                 break;
             else
             {
@@ -309,7 +404,7 @@ void MainConsole::listScreens(bool debug) {
         cout << "Finished processes: " << endl;
 
         for (const auto& screen : screens) {
-            if (screen->status == Screen::FINISHED)
+            if (screen->status == Screen::DONE)
             {
                 cout << screen->processName << "    "
                      << "(" + screen->creationTime + ")  "
@@ -381,7 +476,7 @@ void MainConsole::joinAllThreads()
     cpuCycleThreadHolder.join();
 }
 
-void MainConsole::scheduler_test()
+void MainConsole::schedulerTest()
 {
     if (freq == 0)
     {
@@ -408,27 +503,21 @@ void MainConsole::scheduler_test()
 
 void MainConsole::simulateCpuCycle()
 {
+    while (isRunning) {
 
-    while (!hasQuit) {
+        if (allowProcessCreation)
+            schedulerTest();
 
-        // 1. receive new processes
-        if (toStartCreatingProcess)
-            scheduler_test();
+        scheduler.startScheduler();
 
-        // 2. run scheduler
-        scheduler.run_scheduler();
-
-        // to see if this is an idle cycle, check if all cores have process
         if (isIdleCycle())
             idleCycles++;
         else
             activeCycles++;
 
-        // 3. execute all cores
         for (int i = 0; i < listOfCoreThreads.size(); i++)
             listOfCoreThreads[i] = std::thread(&Core::run_core, scheduler.coresAvailable[i]);
 
-        // wait until cores have finished execution
         for (int i = 0; i < listOfCoreThreads.size(); i++)
             listOfCoreThreads[i].join();
 
@@ -440,206 +529,86 @@ void MainConsole::simulateCpuCycle()
 bool MainConsole::isIdleCycle()
 {
     for (int i = 0; i < listOfCoreThreads.size(); i++)
-    {
-        if (scheduler.coresAvailable[i]->process_to_execute != nullptr) // there is a process to be executed
+        if (scheduler.coresAvailable[i]->process_to_execute != nullptr)
             return false;
-    }
+  
     return true;
 }
 
+void MainConsole::generateReportUtil() {
+    ofstream fileOPESY;
+    fileOPESY.open("csopesy-log.txt");
 
-void MainConsole::initialize() {
+    // Write CPU utilization details
+    int coresUsed = checkCoresUsed();
+    fileOPESY << "--------------------------------------" << endl
+        << "CPU Utilization: " << std::round(((coresUsed * 1.0) / scheduler.coresAvailable.size()) * 100) << "%" << endl
+        << "Cores used: " << coresUsed << endl
+        << "Cores available: " << scheduler.coresAvailable.size() - coresUsed << endl << endl
+        << "--------------------------------------" << endl;
 
-    ifstream readConfigFile("config.txt");
-
-    if (!readConfigFile.is_open()) {
-        cout << "Failed to read the config.txt file." << endl;
+    // Write screen details
+    if (screens.empty()) {
+        fileOPESY << "No screens attached." << endl;
     }
     else {
-        string cpuOption;
-        string configInput;
-        std::istringstream iss;
-
-        try {
-            // num-cpu
-            getline(readConfigFile, cpuOption);
-            iss.str(cpuOption);
-            iss >> cpuOption >> configInput;
-            iss.clear(); // clear stream
-
-            if (cpuOption != "num-cpu")
-                throw std::invalid_argument("No option for num-cpu");
-
-
-            nCpuToInitialize = stoi(configInput);
-            // to initialize cores after delay-per-exec is received
-
-
-            // ------------------------ 
-
-            // scheduler
-            getline(readConfigFile, cpuOption);
-            iss.str(cpuOption);
-            iss >> cpuOption >> configInput;
-            iss.clear();// clear stream
-
-            if (cpuOption != "scheduler")
-                throw std::invalid_argument("No option for scheduler");
-
-            schedulerType = configInput;
-
-
-
-
-            // ------------------------ 
-
-            // quantum-cycles
-            getline(readConfigFile, cpuOption);
-            iss.str(cpuOption);
-            iss >> cpuOption >> configInput;
-            iss.clear();// clear stream
-
-            if (cpuOption != "quantum-cycles")
-                throw std::invalid_argument("No option for quantum-cycles");
-
-            quantumCycles = stoi(configInput);
-
-            // ------------------------ 
-
-            // batch-process-freq
-            getline(readConfigFile, cpuOption);
-            iss.str(cpuOption);
-            iss >> cpuOption >> configInput;
-            iss.clear();// clear stream
-
-            if (cpuOption != "batch-process-freq")
-                throw std::invalid_argument("No option for batch-process-freq");
-
-            freqProcess = stoi(configInput);
-
-            // ------------------------
-            // min-ins
-            getline(readConfigFile, cpuOption);
-            iss.str(cpuOption);
-            iss >> cpuOption >> configInput;
-            iss.clear();// clear stream
-
-            if (cpuOption != "min-ins")
-                throw std::invalid_argument("No option for min-ins");
-
-            minCommand = stoi(configInput);
-
-            // ------------------------
-
-            // max-ins
-            getline(readConfigFile, cpuOption);
-            iss.str(cpuOption);
-            iss >> cpuOption >> configInput;
-            iss.clear();// clear stream
-
-            if (cpuOption != "max-ins")
-                throw std::invalid_argument("No option for max-ins");
-
-            maxCommand = stoi(configInput);
-
-            // ------------------------ 
-
-            // delays-per-exec
-            getline(readConfigFile, cpuOption);
-            iss.str(cpuOption);
-            iss >> cpuOption >> configInput;
-            iss.clear();// clear stream
-
-            if (cpuOption != "delays-per-exec")
-                throw std::invalid_argument("No option for delays-per-exec");
-
-            delayExecFake = stoi(configInput); 
-            delayExec = stoi(configInput) + 1; // + 1 for easier time(?)
-
-
-            // ------------------------
-
-            // max-overall-mem
-            getline(readConfigFile, cpuOption);
-            iss.str(cpuOption);
-            iss >> cpuOption >> configInput;
-            iss.clear();// clear stream
-
-            if (cpuOption != "max-overall-mem")
-                throw std::invalid_argument("No option for max-overall-mem");
-
-            maxMemory = stoi(configInput);
-
-
-            // ------------------------
-
-            // mem-per-frame
-            getline(readConfigFile, cpuOption);
-            iss.str(cpuOption);
-            iss >> cpuOption >> configInput;
-            iss.clear();// clear stream
-
-            if (cpuOption != "mem-per-frame")
-                throw std::invalid_argument("No option for mem-per-frame");
-
-            memoryPerFrame = stoi(configInput);
-
-
-
-            // ------------------------
-            // 
-            // mem-per-proc
-            getline(readConfigFile, cpuOption);
-            iss.str(cpuOption);
-            iss >> cpuOption >> configInput;
-            iss.clear();// clear stream
-
-            if (cpuOption != "min-mem-per-proc")
-                throw std::invalid_argument("No option for min-mem-per-proc");
-
-            minMemPerProc = stoi(configInput);
-
-
-
-            // ------------------------
-            // 
-            // mem-per-proc
-            getline(readConfigFile, cpuOption);
-            iss.str(cpuOption);
-            iss >> cpuOption >> configInput;
-            iss.clear();// clear stream
-
-            if (cpuOption != "max-mem-per-proc")
-                throw std::invalid_argument("No option for max-mem-per-proc");
-
-            maxMemPerProc = stoi(configInput);
-
-
-
-            // ------------------------
-            memory = make_shared<Memory>();
-            initializeCores(nCpuToInitialize, delayExec, quantumCycles, memory);
-
-            if (maxMemory == memoryPerFrame)
-                memory->initialize(maxMemory, memoryPerFrame, 0);
-            else
-                memory->initialize(maxMemory, memoryPerFrame, 1);
-
-            if (scheduler.initialize_scheduler(schedulerType, memory)) // invalid config return 1
-                throw std::invalid_argument("Invalid scheduler option");
-
-
-            initialized = true;
-
-            Utils::printConfirmation("System initialized.");
-            showConfig = true;
-
-            // start cpu cycles
-            cpuCycleThreadHolder = std::thread(&MainConsole::simulateCpuCycle, this);
-
+        fileOPESY << "Running processes: " << endl;
+        for (const auto& screen : screens) {
+            if (screen->status == Screen::RUNNING) {
+                fileOPESY << screen->processName << "    "
+                    << "(" + screen->creationTime + ")    "
+                    << "Core: " + std::to_string(screen->core_id_assigned) << "    "
+                    << screen->currentLine << " / " << screen->totalLines << "\n";
+            }
         }
-        catch (std::exception& e) {
-            cout << "Error in reading config.txt: " << e.what() << endl;
+
+        fileOPESY << endl;
+        fileOPESY << "Finished processes: " << endl;
+        for (const auto& screen : screens) {
+            if (screen->status == Screen::DONE) {
+                fileOPESY << screen->processName << "    "
+                    << "(" + screen->creationTime + ")  "
+                    << "Finished     "
+                    << screen->currentLine << " / " << screen->totalLines << "\n";
+            }
         }
+        fileOPESY << "--------------------------------------" << endl;
     }
+
+    fileOPESY.close();
+}
+
+void MainConsole::generateProcessSMI() {
+    int coresUsed = checkCoresUsed();
+    int memoryUsage = memory->getMemoryUsage();
+    int memoryUtilization = std::round(((memoryUsage * 1.0) / memory->maxMemory) * 100);
+    int cpuUtilization = std::round(((coresUsed * 1.0) / scheduler.coresAvailable.size()) * 100);
+
+    // Header
+    cout << endl 
+         << "-------------------------------------------------------------" << endl
+         << "|                       PROCESS-SMI                         |" << endl
+         << "-------------------------------------------------------------" << endl;
+
+    // System Utilization
+    cout << "CPU Utilization:     " << cpuUtilization << "%" << endl;
+    cout << "Memory Usage:        " << memoryUsage << "KB / " << memory->maxMemory << "KB" << endl;
+    cout << "Memory Utilization:  " << memoryUtilization << "%" << endl;
+    cout << "-------------------------------------------------------------" << endl;
+
+    // Running Processes
+    if (memory->processInMemory.empty()) {
+        cout << "No running processes." << endl;
+    }
+    else {
+        cout << "Running Processes and Memory Usage:" << endl;
+        cout << "-------------------------------------------------------------" << endl;
+        for (const auto& process : memory->processInMemory) {
+            cout << process->processName << " - Memory: " << process->memory_to_occupy << "KB" << endl;
+        }
+        cout << "-------------------------------------------------------------" << endl;
+    }
+
+    // Footer
+    cout << "=============================================================" << endl;
 }

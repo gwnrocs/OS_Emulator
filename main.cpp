@@ -2,6 +2,6 @@
 
 int main() {
     MainConsole console;
-    console.start();
+    console.drawConsole();
     return 0;
 }
