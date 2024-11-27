@@ -29,7 +29,7 @@ namespace Utils {
     void clearScreen();
     void printError(const string& command);
     void printHeader();
-    void printConfig();
+    void printDivider();
 }
 
 #endif

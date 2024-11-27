@@ -19,7 +19,7 @@ void Console::start() {
             showConfig = false;
         }
 
-        std::cout << "  Enter a command: ";
+        cout << Colors::Yellow << "Enter a command: " << Colors::White;
         std::getline(std::cin, command);
 
         
@@ -42,12 +42,12 @@ void Console::start() {
                 listOfCoreThreads.clear();
                 hasQuit = false;
 
-                std::cout << "  System stopped. Reinitializing..." << std::endl;
+                cout << "  System stopped. Reinitializing..." << endl;
             }
 
             initialize(); // Call the initialize function to reinitialize the system
             if (initialized) {
-                std::cout << "  System initialized successfully.\n" << std::endl;
+                cout << "System initialized successfully." << endl << endl;
             }
         }
 
@@ -55,7 +55,7 @@ void Console::start() {
             hasQuit = true;
             joinAllThreads();
 
-            std::cout << "Exiting program... Goodbye!" << std::endl;
+            cout << "Exiting program... Goodbye!" << endl;
             break;
         }
 
@@ -79,18 +79,19 @@ void Console::start() {
 
             // copied and pasted from screen -ls command
             int coresUsed = checkCoresUsed();
-            fileOPESY << "CPU Utilization: " << std::round(((coresUsed * 1.0) / scheduler.coresAvailable.size()) * 100) << "%" << std::endl;
-            fileOPESY << "Cores used: " << coresUsed << std::endl;
-            fileOPESY << "Cores available: " << scheduler.coresAvailable.size() - coresUsed << std::endl << std::endl;
-
-            fileOPESY << "--------------------------------------" << std::endl;
+            fileOPESY << "--------------------------------------" << endl 
+                      << "CPU Utilization: " << std::round(((coresUsed * 1.0) / scheduler.coresAvailable.size()) * 100) << "%" << endl
+                      << "Cores used: " << coresUsed << endl
+                      << "Cores available: " << scheduler.coresAvailable.size() - coresUsed << endl << endl
+                      << "--------------------------------------" << endl;
 
             if (screens.empty()) {
-                fileOPESY << "No screens attached." << std::endl;
+                fileOPESY << "No screens attached." << endl;
+                Utils::printDivider();
             }
             else {
 
-                fileOPESY << "Running processes: " << std::endl;
+                fileOPESY << "Running processes: " << endl;
 
                 for (const auto& screen : screens) {
                     if (screen->status == Screen::RUNNING)
@@ -99,13 +100,11 @@ void Console::start() {
                         fileOPESY << "(" + screen->created_at + ")    ";
                         fileOPESY << "Core: " + std::to_string(screen->core_id_assigned) << "    ";
                         fileOPESY << screen->curr_line_instr << " / " << screen->total_line_instr << "\n";
-
                     }
-
                 }
 
-                fileOPESY << std::endl;
-                fileOPESY << "Finished processes: " << std::endl;
+                fileOPESY << endl;
+                fileOPESY << "Finished processes: " << endl;
 
                 for (const auto& screen : screens) {
                     if (screen->status == Screen::FINISHED)
@@ -115,76 +114,70 @@ void Console::start() {
                         fileOPESY << "Finished     ";
                         fileOPESY << screen->curr_line_instr << " / " << screen->total_line_instr << "\n";
                     }
-
                 }
-                fileOPESY << "--------------------------------------" << std::endl;
+                fileOPESY << "--------------------------------------" << endl;
 
             }
             fileOPESY.close();
 
-            //
-            std::cout << "Successfully printed report-util." << std::endl;
+            cout << "Successfully printed report-util." << endl;
         }
         else if (command == "scheduler -test") {
             if (toStartCreatingProcess)
-            {
-                std::cout << "scheduler -test is already activated." << std::endl;
-            }
-            else {
+                cout << Colors::Green << "\nProcess generation is already activated\n\n" << Colors::White;
+            
+            else 
                 toStartCreatingProcess = true;
-                std::cout << "scheduler -test activated." << std::endl;
-            }
-
+                cout << Colors::Green << "\nProcess generation has started . . .\n\n" << Colors::White;
         }
+
         else if (command == "scheduler -stop") {
             if (!toStartCreatingProcess)
-                std::cout << "No ongoing scheduler-test at the moment." << std::endl;
+                cout << Colors::Red << "\nProcess generation is not activated\n\n" << Colors::White;
             else {
                 toStartCreatingProcess = false;
-                std::cout << "Stopped scheduler-test." << std::endl;
+                cout << Colors::Red << "\nProcess generation has stopped\n\n" << Colors::White;
             }
         }
+
         else if (command == "process-smi") {
             int coresUsed = checkCoresUsed();
             int memoryUsage = memory->getMemoryUsage();
-            std::cout << "-------------------------------------------------------------" << std::endl;
-            std::cout << "|                       PROCESS-SMI                         |" << std::endl;
-            std::cout << "-------------------------------------------------------------" << std::endl;
-            std::cout << "CPU-Util: " << std::round(((coresUsed * 1.0) / scheduler.coresAvailable.size()) * 100) << "%" << std::endl;
-            std::cout << "Memory Usage: " << memoryUsage << "KB / " << memory->maxMemory << "KB" << std::endl;
-            std::cout << "Memory Util: " << std::round(((memoryUsage * 1.0) / memory->maxMemory) * 100) << "%" << std::endl << std::endl;
-            std::cout << "==============================================================" << std::endl;
-            std::cout << "Running processes and memory usage:" << std::endl;
-            std::cout << "-------------------------------------------------------------" << std::endl;
+            cout << endl;
+            cout << "-------------------------------------------------------------" << endl;
+            cout << "|                       PROCESS-SMI                         |" << endl;
+            cout << "-------------------------------------------------------------" << endl;
+            cout << "CPU-Util: " << std::round(((coresUsed * 1.0) / scheduler.coresAvailable.size()) * 100) << "%" << endl;
+            cout << "Memory Usage: " << memoryUsage << "KB / " << memory->maxMemory << "KB" << endl;
+            cout << "Memory Util: " << std::round(((memoryUsage * 1.0) / memory->maxMemory) * 100) << "%" << endl << endl;
+            cout << "==============================================================" << endl;
+            cout << "Running processes and memory usage:" << endl;
+            cout << "-------------------------------------------------------------" << endl;
 
             for (int i = 0; i < memory->processInMemory.size(); i++)
-                std::cout << memory->processInMemory[i]->process_name << " " << memory->processInMemory[i]->memory_to_occupy << "KB" << std::endl;
+                cout << memory->processInMemory[i]->process_name << " " << memory->processInMemory[i]->memory_to_occupy << "KB" << endl;
 
-            std::cout << "-------------------------------------------------------------" << std::endl;
-
-
-
+            cout << "-------------------------------------------------------------" << endl;
         }
+
         else if (command == "vmstat") {
             int memoryUsage = memory->getMemoryUsage();
             int freeMemory = memory->maxMemory - memoryUsage;
-            std::cout << std::endl;
-            std::cout << memory->maxMemory << " total memory" << std::endl;
-            std::cout << memoryUsage << " used memory" << std::endl;
-            std::cout << freeMemory << " free memory" << std::endl;
-            std::cout << idleCycles << " idle CPU ticks" << std::endl;
-            std::cout << activeCycles << " active CPU ticks" << std::endl;
-            std::cout << cpuCycles << " total CPU ticks" << std::endl;
-            std::cout << memory->numPagedIn << " num paged in" << std::endl;
-            std::cout << memory->numPagedOut << " num paged out" << std::endl;
-            std::cout << std::endl;
-
+            Utils::printDivider();
+            cout << memory->maxMemory << " total memory" << endl
+                 << memoryUsage << " used memory" << endl
+                 << freeMemory << " free memory" << endl
+                 << idleCycles << " idle CPU ticks" << endl
+                 << activeCycles << " active CPU ticks" << endl
+                 << cpuCycles << " total CPU ticks" << endl
+                 << memory->numPagedIn << " num paged in" << endl
+                 << memory->numPagedOut << " num paged out" << endl;
+            Utils::printDivider();
         }
         else {
             showConfig = true;
             Utils::printError(command);
         }
-
     }
 }
 
@@ -194,7 +187,6 @@ void Console::initializeCores(int numCores, int delay, int quantumCycles, std::s
     for (int i = 0; i < numCores; i++) {
         auto core = make_shared<Core>(i, delay, quantumCycles, memory);
         scheduler.coresAvailable.push_back(core);
-
     }
 
     listOfCoreThreads.resize(numCores); // reserve space in advance
@@ -211,42 +203,40 @@ void Console::handleScreenCommand(const string& option, const string& process_na
     else if (option == "-ls") {
         listScreens();
     }
-    // Lists core availability and ready queue along with the normal screen -ls
     else if (option == "-ls-debug") {
         listScreens(true);
     }
     else {
-        std::cout << "Command not recognized." << std::endl;
+        cout << "Command not recognized." << endl;
     }
 }
 
 
 void Console::printConfig() {
-    cout << Colors::Grey << "  Current Configuration:" << Colors::White << endl;
+    cout << Colors::Grey << "Current Configuration:" << Colors::White << endl;
 
-    std::cout << "  Number of CPUs: " << nCpuToInitialize << std::endl;
+    cout << "Number of CPUs: " << nCpuToInitialize << endl;
 
     if (schedulerType == "rr") {
-        std::cout << "  Scheduler Type: Round Robin" << std::endl;
-        std::cout << "  Quantum Cycles: " << quantumCycles << std::endl;
+        cout << "Scheduler Type: Round Robin"            << endl
+                  << "Quantum Cycles: " << quantumCycles << endl;
     }
     else {
-        std::cout << "  Scheduler Type: First Come First Serve" << std::endl;
-        std::cout << "  Quantum Cycles: N/A" << std::endl;
+        cout << "Scheduler Type: First Come First Serve" << endl
+             << "Quantum Cycles: N/A"                    << endl;
     }
 
-    std::cout << "  Batch Process Frequency: " << freqProcess << std::endl;
-    std::cout << "  Minimum Instructions: " << minCommand << std::endl;
-    std::cout << "  Maximum Instructions: " << maxCommand << std::endl;
-    std::cout << "  Delays Per Execution: " << delayExecFake << std::endl;
-    std::cout << "  Maximum Overall Memory: " << maxMemory << " KB" << std::endl;
-    std::cout << "  Memory Per Frame: " << memoryPerFrame << " KB" << std::endl;
-    std::cout << "  Minimum Memory Per Process: " << minMemPerProc << " KB" << std::endl;
-    std::cout << "  Maximum Memory Per Process: " << maxMemPerProc << " KB" << std::endl;
+    cout << "Batch Process Frequency: "     << freqProcess              << endl
+         << "Minimum Instructions: "        << minCommand               << endl
+         << "Maximum Instructions: "        << maxCommand               << endl
+         << "Delays Per Execution: "        << delayExecFake            << endl
+         << "Maximum Overall Memory: "      << maxMemory      << " KB"  << endl
+         << "Memory Per Frame: "            << memoryPerFrame << " KB"  << endl
+         << "Minimum Memory Per Process: "  << minMemPerProc  << " KB"  << endl
+         << "Maximum Memory Per Process: "  << maxMemPerProc  << " KB"  << endl;
 
-    cout << Colors::Grey << "\n  ---------------------------------- \n" << Colors::White << endl;
+    Utils::printDivider();
 }
-
 
 
 void Console::createScreen(const string& process_name) {
@@ -266,11 +256,10 @@ void Console::createScreen(const string& process_name) {
         initScreen(screen);
     }
     else {
-        std::cout << "Screen initialization failed. Please use another process name." << std::endl;
+        cout << "Screen initialization failed. Please use another process name." << endl;
     }
 }
 
-// to check if process has finished, then do not enter initScreen()
 void Console::attachScreen(const string& process_name) {
     bool screenFound = false;
     for (int i = 0; i < screens.size(); i++) {
@@ -287,55 +276,50 @@ void Console::attachScreen(const string& process_name) {
         }
     }
     if (!screenFound) {
-        std::cout << "Process " << process_name << " not found." << std::endl;
+        cout << "Process " << process_name << " not found." << endl;
     }
 }
 
 void Console::listScreens(bool debug) {
 
     int coresUsed = checkCoresUsed();
-    std::cout << "CPU Utilization: " << std::round(((coresUsed * 1.0) / scheduler.coresAvailable.size()) * 100) << "%" << std::endl;
-    std::cout << "Cores used: " << coresUsed << std::endl;
-    std::cout << "Cores available: " << scheduler.coresAvailable.size() - coresUsed << std::endl << std::endl;
 
-    std::cout << "--------------------------------------" << std::endl;
+    Utils::printDivider();
+    cout << "CPU Utilization: " << std::round(((coresUsed * 1.0) / scheduler.coresAvailable.size()) * 100) << "%" << endl
+         << "Cores used: " << coresUsed << endl
+         << "Cores available: " << scheduler.coresAvailable.size() - coresUsed << endl;
+    Utils::printDivider();
 
     if (screens.empty()) {
-        std::cout << "No screens attached." << std::endl;
+        cout << "No screens attached." << endl;
     }
     else {
-
-        std::cout << "Running processes: " << std::endl;
+        cout << "Running processes: " << endl;
 
         for (const auto& screen : screens) {
             if (screen->status == Screen::RUNNING)
             {
-                std::cout << screen->process_name << "    ";
-                std::cout << "(" + screen->created_at + ")    ";
-                std::cout << "Core: " + std::to_string(screen->core_id_assigned) << "    ";
-                std::cout << screen->curr_line_instr << " / " << screen->total_line_instr << "\n";
-
+                cout << screen->process_name << "    "
+                     << "(" + screen->created_at + ")    "
+                     << "Core: " + std::to_string(screen->core_id_assigned) << "    "
+                     << screen->curr_line_instr << " / " << screen->total_line_instr << endl;
             }
-
         }
 
-        std::cout << std::endl;
-        std::cout << "Finished processes: " << std::endl;
+        cout << endl;
+        cout << "Finished processes: " << endl;
 
         for (const auto& screen : screens) {
             if (screen->status == Screen::FINISHED)
             {
-                std::cout << screen->process_name << "    ";
-                std::cout << "(" + screen->created_at + ")  ";
-                std::cout << "Finished     ";
-                std::cout << screen->curr_line_instr << " / " << screen->total_line_instr << "\n";
+                cout << screen->process_name << "    "
+                     << "(" + screen->created_at + ")  "
+                     << "Finished     "
+                     << screen->curr_line_instr << " / " << screen->total_line_instr << endl;
             }
-
-
         }
-        std::cout << "--------------------------------------" << std::endl;
+        Utils::printDivider();
 
-        // For calling screen -ls-debug
         if (debug) {
             scheduler.debugSchedulerState();
         }
@@ -352,7 +336,6 @@ int Console::checkCoresUsed()
     }
 
     return coresUsed;
-
 }
 
 
@@ -371,11 +354,12 @@ void Console::initScreen(std::shared_ptr<Screen> screen) {
 
     while (true) {
         std::string command;
-        std::cout << "root:/> ";
+        cout << Colors::Yellow << "Enter command: " << Colors::White;
         std::getline(std::cin, command);
 
         if (command == "exit") {
-            Utils::clearScreen();
+            system("cls");
+            Utils::printHeader();
             showConfig = true;
             break;
         }
@@ -387,11 +371,10 @@ void Console::initScreen(std::shared_ptr<Screen> screen) {
             screen->printScreen();
         }
         else {
-            std::cout << "Unknown command. Please try again." << std::endl;
+            cout << Colors::Red << "\nCommand not recognized.\n\n" << Colors::White;
         }
     }
 }
-
 
 
 void Console::joinAllThreads()
@@ -401,8 +384,7 @@ void Console::joinAllThreads()
 
 void Console::scheduler_test()
 {
-    // we made it -1 in instantiating batch-per-freq, so it's centered at 0
-    if (freq == 0) // if statement will dictate if it will create a process
+    if (freq == 0)
     {
         std::random_device rd;
         std::mt19937 gen(rd());
@@ -472,7 +454,7 @@ void Console::initialize() {
     ifstream readConfigFile("config.txt");
 
     if (!readConfigFile.is_open()) {
-        std::cout << "Failed to read the config.txt file." << std::endl;
+        cout << "Failed to read the config.txt file." << endl;
     }
     else {
         string cpuOption;
@@ -658,7 +640,7 @@ void Console::initialize() {
 
         }
         catch (std::exception& e) {
-            std::cout << "Error in reading config.txt: " << e.what() << std::endl;
+            cout << "Error in reading config.txt: " << e.what() << endl;
         }
     }
 }

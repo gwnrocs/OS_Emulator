@@ -10,13 +10,26 @@ Screen::Screen(std::string process_name, int pid, int curr_line_instr, int total
     placed_in_memory(0) {}
 
 void Screen::printScreen() {
-    std::cout << "Process Name: " << process_name << "\nPID: " << pid
-        << "\nCurrent Instruction Line: " << curr_line_instr
-        << "\nLines of Code: " << total_line_instr
-        << "\nCreated At: " << created_at << std::endl;
+    if (status != 3) {
+        std::cout << "\nProcess Name: " << process_name << "\n";
+        std::cout << "Time Created: " << created_at << "\n";
 
-    if (status == FINISHED)
-        std::cout << "Finished!" << std::endl;
+        std::string strStatus = "";
+        switch (status) {
+        case 0: strStatus = "Created"; break;
+        case 1: strStatus = "Waiting"; break;
+        case 2: strStatus = "Running"; break;
+        case 3: strStatus = "Done";
+        }
+
+        std::cout << "Status: " << strStatus << "\n";
+        std::cout << "ID: " << pid << "\n";
+        std::cout << "Current Instruction Line: " << curr_line_instr << "\n";
+        std::cout << "Lines of Code: " << total_line_instr << "\n\n";
+    }
+    else {
+        std::cout << "\nFinished!\n\n";
+    }
 }
 
 int Screen::executeCommand() {
