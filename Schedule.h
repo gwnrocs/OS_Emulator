@@ -14,7 +14,7 @@ public:
         RR
     };
 
-    SchedulingAlgorithm schedulingAlgo;
+    SchedulingAlgorithm schedulingAlgorithm;
     std::vector<std::shared_ptr<Core>> coresAvailable;
     std::vector<std::shared_ptr<Screen>> readyQueue;
     std::shared_ptr<Memory> memory;

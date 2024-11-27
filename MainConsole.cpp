@@ -1,4 +1,4 @@
-#include "Console.h"
+#include "MainConsole.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -7,11 +7,11 @@
 
 using namespace std;
 
-Console::Console() : isMainMenu(true) {}
+MainConsole::MainConsole() : isMainMenu(true) {}
 
-void Console::start() {
+void MainConsole::start() {
     Utils::printHeader();
-    string command, option, process_name;
+    string command, option, processName;
 
     while (true) {
         if (showConfig) {
@@ -62,9 +62,9 @@ void Console::start() {
         else if (command.find("screen") == 0) {
 
             std::istringstream iss(command.substr(6));
-            iss >> option >> process_name;
+            iss >> option >> processName;
 
-            handleScreenCommand(option, process_name);
+            handleScreenCommand(option, processName);
         }
         else if (command == "clear") {
             Utils::clearScreen(); 
@@ -72,7 +72,6 @@ void Console::start() {
         }
         else if (command == "report-util")
         {
-
             ofstream fileOPESY;
             fileOPESY.open("csopesy-log.txt");
 
@@ -96,10 +95,10 @@ void Console::start() {
                 for (const auto& screen : screens) {
                     if (screen->status == Screen::RUNNING)
                     {
-                        fileOPESY << screen->process_name << "    ";
-                        fileOPESY << "(" + screen->created_at + ")    ";
+                        fileOPESY << screen->processName << "    ";
+                        fileOPESY << "(" + screen->creationTime + ")    ";
                         fileOPESY << "Core: " + std::to_string(screen->core_id_assigned) << "    ";
-                        fileOPESY << screen->curr_line_instr << " / " << screen->total_line_instr << "\n";
+                        fileOPESY << screen->currentLine << " / " << screen->totalLines << "\n";
                     }
                 }
 
@@ -109,10 +108,10 @@ void Console::start() {
                 for (const auto& screen : screens) {
                     if (screen->status == Screen::FINISHED)
                     {
-                        fileOPESY << screen->process_name << "    ";
-                        fileOPESY << "(" + screen->created_at + ")  ";
+                        fileOPESY << screen->processName << "    ";
+                        fileOPESY << "(" + screen->creationTime + ")  ";
                         fileOPESY << "Finished     ";
-                        fileOPESY << screen->curr_line_instr << " / " << screen->total_line_instr << "\n";
+                        fileOPESY << screen->currentLine << " / " << screen->totalLines << "\n";
                     }
                 }
                 fileOPESY << "--------------------------------------" << endl;
@@ -120,11 +119,11 @@ void Console::start() {
             }
             fileOPESY.close();
 
-            cout << "Successfully printed report-util." << endl;
+            cout << "\nSuccessfully printed report-util.\n" << endl;
         }
         else if (command == "scheduler -test") {
             if (toStartCreatingProcess)
-                cout << Colors::Green << "\nProcess generation is already activated\n\n" << Colors::White;
+                cout << Colors::Green << "\nProcess generation is already activated . . .\n\n" << Colors::White;
             
             else 
                 toStartCreatingProcess = true;
@@ -133,10 +132,10 @@ void Console::start() {
 
         else if (command == "scheduler -stop") {
             if (!toStartCreatingProcess)
-                cout << Colors::Red << "\nProcess generation is not activated\n\n" << Colors::White;
+                cout << Colors::Red << "\nProcess generation is not activated . . .\n\n" << Colors::White;
             else {
                 toStartCreatingProcess = false;
-                cout << Colors::Red << "\nProcess generation has stopped\n\n" << Colors::White;
+                cout << Colors::Red << "\nProcess generation has stopped . . .\n\n" << Colors::White;
             }
         }
 
@@ -155,7 +154,7 @@ void Console::start() {
             cout << "-------------------------------------------------------------" << endl;
 
             for (int i = 0; i < memory->processInMemory.size(); i++)
-                cout << memory->processInMemory[i]->process_name << " " << memory->processInMemory[i]->memory_to_occupy << "KB" << endl;
+                cout << memory->processInMemory[i]->processName << " " << memory->processInMemory[i]->memory_to_occupy << "KB" << endl;
 
             cout << "-------------------------------------------------------------" << endl;
         }
@@ -182,7 +181,7 @@ void Console::start() {
 }
 
 
-void Console::initializeCores(int numCores, int delay, int quantumCycles, std::shared_ptr<Memory> memory)
+void MainConsole::initializeCores(int numCores, int delay, int quantumCycles, std::shared_ptr<Memory> memory)
 {
     for (int i = 0; i < numCores; i++) {
         auto core = make_shared<Core>(i, delay, quantumCycles, memory);
@@ -193,12 +192,12 @@ void Console::initializeCores(int numCores, int delay, int quantumCycles, std::s
 }
 
 
-void Console::handleScreenCommand(const string& option, const string& process_name) {
-    if (option == "-r" && process_name != "") {
-        attachScreen(process_name);
+void MainConsole::handleScreenCommand(const string& option, const string& processName) {
+    if (option == "-r" && processName != "") {
+        attachScreen(processName);
     }
-    else if (option == "-s" && process_name != "") {
-        createScreen(process_name);
+    else if (option == "-s" && processName != "") {
+        createScreen(processName);
     }
     else if (option == "-ls") {
         listScreens();
@@ -212,7 +211,7 @@ void Console::handleScreenCommand(const string& option, const string& process_na
 }
 
 
-void Console::printConfig() {
+void MainConsole::printConfig() {
     cout << Colors::Grey << "Current Configuration:" << Colors::White << endl;
 
     cout << "Number of CPUs: " << nCpuToInitialize << endl;
@@ -239,16 +238,16 @@ void Console::printConfig() {
 }
 
 
-void Console::createScreen(const string& process_name) {
-    if (!checkExistingScreen(process_name)) {
+void MainConsole::createScreen(const string& processName) {
+    if (!checkExistingScreen(processName)) {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> dist(minCommand, maxCommand); // randomize the amount of commands
         std::uniform_int_distribution<> mem(minMemPerProc, maxMemPerProc);
         int generatedMemory = mem(gen);
 
-        int pid = screens.size();
-        std::shared_ptr<Screen> screen = make_shared<Screen>(Screen(process_name, pid, 0, dist(gen), 
+        int processId = screens.size();
+        std::shared_ptr<Screen> screen = make_shared<Screen>(Screen(processName, processId, 0, dist(gen), 
                                         Utils::getCurrentTimestamp(), generatedMemory, 
                                         ceil((generatedMemory * 1.0) / memoryPerFrame)));
         screens.push_back(screen);
@@ -260,10 +259,10 @@ void Console::createScreen(const string& process_name) {
     }
 }
 
-void Console::attachScreen(const string& process_name) {
+void MainConsole::attachScreen(const string& processName) {
     bool screenFound = false;
     for (int i = 0; i < screens.size(); i++) {
-        if (screens[i]->process_name == process_name) {
+        if (screens[i]->processName == processName) {
 
             if (screens[i]->status == Screen::FINISHED)
                 break;
@@ -276,11 +275,11 @@ void Console::attachScreen(const string& process_name) {
         }
     }
     if (!screenFound) {
-        cout << "Process " << process_name << " not found." << endl;
+        cout << "Process " << processName << " not found." << endl;
     }
 }
 
-void Console::listScreens(bool debug) {
+void MainConsole::listScreens(bool debug) {
 
     int coresUsed = checkCoresUsed();
 
@@ -299,10 +298,10 @@ void Console::listScreens(bool debug) {
         for (const auto& screen : screens) {
             if (screen->status == Screen::RUNNING)
             {
-                cout << screen->process_name << "    "
-                     << "(" + screen->created_at + ")    "
+                cout << screen->processName << "    "
+                     << "(" + screen->creationTime + ")    "
                      << "Core: " + std::to_string(screen->core_id_assigned) << "    "
-                     << screen->curr_line_instr << " / " << screen->total_line_instr << endl;
+                     << screen->currentLine << " / " << screen->totalLines << endl;
             }
         }
 
@@ -312,10 +311,10 @@ void Console::listScreens(bool debug) {
         for (const auto& screen : screens) {
             if (screen->status == Screen::FINISHED)
             {
-                cout << screen->process_name << "    "
-                     << "(" + screen->created_at + ")  "
+                cout << screen->processName << "    "
+                     << "(" + screen->creationTime + ")  "
                      << "Finished     "
-                     << screen->curr_line_instr << " / " << screen->total_line_instr << endl;
+                     << screen->currentLine << " / " << screen->totalLines << endl;
             }
         }
         Utils::printDivider();
@@ -326,7 +325,7 @@ void Console::listScreens(bool debug) {
     }
 }
 
-int Console::checkCoresUsed()
+int MainConsole::checkCoresUsed()
 {
     int coresUsed = 0;
     for (int i = 0; i < scheduler.coresAvailable.size(); i++)
@@ -339,16 +338,16 @@ int Console::checkCoresUsed()
 }
 
 
-bool Console::checkExistingScreen(const string& process_name) {
+bool MainConsole::checkExistingScreen(const string& processName) {
     for (const auto& screen : screens) {
-        if (screen->process_name == process_name) {
+        if (screen->processName == processName) {
             return true;
         }
     }
     return false;
 }
 
-void Console::initScreen(std::shared_ptr<Screen> screen) {
+void MainConsole::initScreen(std::shared_ptr<Screen> screen) {
     system("cls");
     screen->printScreen();
 
@@ -377,12 +376,12 @@ void Console::initScreen(std::shared_ptr<Screen> screen) {
 }
 
 
-void Console::joinAllThreads()
+void MainConsole::joinAllThreads()
 {
     cpuCycleThreadHolder.join();
 }
 
-void Console::scheduler_test()
+void MainConsole::scheduler_test()
 {
     if (freq == 0)
     {
@@ -407,7 +406,7 @@ void Console::scheduler_test()
 }
 
 
-void Console::simulateCpuCycle()
+void MainConsole::simulateCpuCycle()
 {
 
     while (!hasQuit) {
@@ -438,7 +437,7 @@ void Console::simulateCpuCycle()
 }
 
 
-bool Console::isIdleCycle()
+bool MainConsole::isIdleCycle()
 {
     for (int i = 0; i < listOfCoreThreads.size(); i++)
     {
@@ -449,7 +448,7 @@ bool Console::isIdleCycle()
 }
 
 
-void Console::initialize() {
+void MainConsole::initialize() {
 
     ifstream readConfigFile("config.txt");
 
@@ -636,7 +635,7 @@ void Console::initialize() {
             showConfig = true;
 
             // start cpu cycles
-            cpuCycleThreadHolder = std::thread(&Console::simulateCpuCycle, this);
+            cpuCycleThreadHolder = std::thread(&MainConsole::simulateCpuCycle, this);
 
         }
         catch (std::exception& e) {

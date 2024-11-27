@@ -1,7 +1,7 @@
-#include "Console.h"
+#include "MainConsole.h"
 
 int main() {
-    Console console;
+    MainConsole console;
     console.start();
     return 0;
 }

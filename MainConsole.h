@@ -1,5 +1,5 @@
-#ifndef CONSOLE_H
-#define CONSOLE_H
+#ifndef MainConsole_H
+#define MainConsole_H
 
 #include <vector>
 #include <string>
@@ -14,7 +14,7 @@
 #include "Memory.h"
 #include "Utils.h"
 
-class Console {
+class MainConsole {
 private:
     Schedule scheduler;
     std::shared_ptr<Memory> memory;
@@ -50,19 +50,21 @@ private:
 
     // Private utility functions
     int checkCoresUsed();
-    bool checkExistingScreen(const std::string& process_name);
+    bool checkExistingScreen(const std::string& 
+    
+    );
     bool isIdleCycle();
     void initializeCores(int numCores, int delay, int quantumCycles, std::shared_ptr<Memory> memory);
-    void attachScreen(const std::string& process_name);
-    void createScreen(const std::string& process_name);
+    void attachScreen(const std::string& processName);
+    void createScreen(const std::string& processName);
     void initScreen(std::shared_ptr<Screen> screen);
-    void handleScreenCommand(const std::string& option, const std::string& process_name);
+    void handleScreenCommand(const std::string& option, const std::string& processName);
     void listScreens(bool debug = false);
     void joinAllThreads();
     void printConfig();
 
 public:
-    Console();
+    MainConsole();
     void start();
     void initialize();
     void scheduler_test();

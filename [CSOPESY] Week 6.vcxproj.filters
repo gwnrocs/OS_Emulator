@@ -21,7 +21,7 @@
     <ClCompile Include="Core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Console.cpp">
+    <ClCompile Include="MainConsole.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Schedule.cpp">
@@ -44,7 +44,7 @@
     <ClInclude Include="Screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Console.h">
+    <ClInclude Include="MainConsole.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Schedule.h">

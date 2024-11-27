@@ -128,7 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Console.cpp" />
+    <ClCompile Include="MainConsole.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Memory.cpp" />
@@ -137,7 +137,7 @@
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Console.h" />
+    <ClInclude Include="MainConsole.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Schedule.h" />

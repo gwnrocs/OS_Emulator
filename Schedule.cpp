@@ -2,19 +2,19 @@
 #include <iostream>
 
 // Constructor
-Schedule::Schedule() : schedulingAlgo(FCFS) {}
+Schedule::Schedule() : schedulingAlgorithm(FCFS) {}
 
 // Initialize scheduler
 int Schedule::initialize_scheduler(const std::string& algoSelected, std::shared_ptr<Memory> memory) {
     std::string algo = algoSelected.substr(1, algoSelected.length() - 2);
 
     if (algo == "fcfs") {
-        schedulingAlgo = FCFS;
+        schedulingAlgorithm = FCFS;
         initialize_memory(memory);
         return 0;
     }
     else if (algo == "rr") {
-        schedulingAlgo = RR;
+        schedulingAlgorithm = RR;
         return 0;
     }
     else {
@@ -29,10 +29,10 @@ void Schedule::initialize_memory(std::shared_ptr<Memory> memory) {
 
 // Run scheduler
 void Schedule::run_scheduler() {
-    if (schedulingAlgo == FCFS) {
+    if (schedulingAlgorithm == FCFS) {
         run_fcfs();
     }
-    else if (schedulingAlgo == RR) {
+    else if (schedulingAlgorithm == RR) {
         run_rr();
     }
 }
@@ -97,14 +97,14 @@ void Schedule::debugSchedulerState() {
 
     std::cout << "Ready Queue:" << std::endl;
     for (const auto& screen : readyQueue) {
-        std::cout << " - " << screen->process_name << " (PID: " << screen->pid << ")" << std::endl;
+        std::cout << " - " << screen->processName << " (PID: " << screen->processId << ")" << std::endl;
     }
 
     std::cout << "Core States:" << std::endl;
     for (const auto& core : coresAvailable) {
         std::cout << "Core " << core->id << ": ";
         if (core->process_to_execute) {
-            std::cout << "Running process " << core->process_to_execute->process_name;
+            std::cout << "Running process " << core->process_to_execute->processName;
         }
         else {
             std::cout << "Free";

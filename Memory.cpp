@@ -28,22 +28,20 @@ void Memory::deallocateFrames(std::shared_ptr<Screen> screen)
         availableFrames.push_back(screen->pages[i]);
     screen->pages.clear();
     deleteProcessInMemory(screen);
-
 }
+
 
 void Memory::deleteProcessInMemory(std::shared_ptr<Screen> screen)
 {
     for (int i = 0; i < processInMemory.size(); i++)
     {
-        if (processInMemory[i] == screen)
-        {
+        if (processInMemory[i] == screen) {
             processInMemory.erase(processInMemory.begin() + i);
             break;
         }
-
     }
-
 }
+
 
 int Memory::returnFirstFitIndex(int framesNeeded)
 {
@@ -51,24 +49,22 @@ int Memory::returnFirstFitIndex(int framesNeeded)
     int increment = 0;
     for (int i = 0; i < numberOfTotalFrames; i++)
     {
-        if (availableFrames[i] == false)
-        {
+        if (availableFrames[i] == false) {
             endRange = i;
             increment++;
         }
-
         else {
             endRange = -1;
             increment = 0;
         }
 
         if (increment == framesNeeded && endRange != -1)
-            return endRange - (framesNeeded - 1); // -1 to include the startIndex
-
+            return endRange - (framesNeeded - 1); 
     }
 
     return -1;
 }
+
 
 void Memory::allocate(std::shared_ptr<Screen> screen)
 {
@@ -78,45 +74,40 @@ void Memory::allocate(std::shared_ptr<Screen> screen)
         else
             allocateFrames(screen);
     }
-
 }
 
-void Memory::storeBackingStore() // already contains deallocate
+
+void Memory::storeBackingStore() 
 {
     if (processInMemory.size() != 0) {
-        int index = 0; // find oldest process
-        // find a process to kick out
+        int index = 0; 
         for (int i = 0; i < processInMemory.size(); i++)
         {
             if (processInMemory[index]->placed_in_memory > processInMemory[i]->placed_in_memory) // index is more recent than i
                 index = i;
-
         }
 
-        // store
         ofstream fileOPESY;
-        fileOPESY.open(processInMemory[index]->process_name + ".txt");
+        fileOPESY.open(processInMemory[index]->processName + ".txt");
         fileOPESY.close();
 
-        // bring back frames
         deallocate(processInMemory[index]);
-
         numPagedOut++;
     }
 }
+
 
 bool Memory::takeBackingStore(std::shared_ptr<Screen> screen)
 {
     try {
         // take
-        std::string fileToRemove = screen->process_name + ".txt";
+        std::string fileToRemove = screen->processName + ".txt";
         std::remove(fileToRemove.c_str());
 
         numPagedIn++;
         return true;
     }
     catch (exception e) {
-        // 
         return false;
     }
 }
@@ -129,7 +120,6 @@ void Memory::deallocate(std::shared_ptr<Screen> screen)
                 deallocateFlatMemory(screen);
             else
                 deallocateFrames(screen);
-
         }
         else
             throw;
@@ -163,13 +153,11 @@ void Memory::allocateFlatMemory(std::shared_ptr<Screen> screen)
             isProcessAllocated = true;
 
         }
-        else // find a process to kick out
+        else 
             storeBackingStore();
-
-
     }
-
 }
+
 
 void Memory::deallocateFlatMemory(std::shared_ptr<Screen> screen)
 {
@@ -185,15 +173,13 @@ void Memory::deallocateFlatMemory(std::shared_ptr<Screen> screen)
 
 void Memory::allocateFrames(std::shared_ptr<Screen> screen)
 {
-    takeBackingStore(screen); // simulate
+    takeBackingStore(screen);
 
     bool isProcessAllocated = false;
     while (!isProcessAllocated)
     {
-
         if (availableFrames.size() >= screen->frames_needed)
         {
-            // take available frames
             for (int i = 0; i < screen->frames_needed; i++)
                 screen->pages.push_back(availableFrames[i]);
 
@@ -201,16 +187,13 @@ void Memory::allocateFrames(std::shared_ptr<Screen> screen)
             processInMemory.push_back(screen);
             screen->placed_in_memory = std::time(nullptr);
             isProcessAllocated = true;
-
-
         }
-        else // kick a process out
+        else 
             storeBackingStore();
-
-
     }
 
 }
+
 
 bool Memory::checkIfProcessExistsInMemory(std::shared_ptr<Screen> screen)
 {
@@ -221,6 +204,7 @@ bool Memory::checkIfProcessExistsInMemory(std::shared_ptr<Screen> screen)
     }
     return false;
 }
+
 
 int Memory::getMemoryUsage()
 {

@@ -1,18 +1,18 @@
 #include "Screen.h"
 #include <iostream>
 
-Screen::Screen(std::string process_name, int pid, int curr_line_instr, int total_line_instr,
-    std::string created_at, int memory_to_occupy, int frames_needed)
-    : process_name(process_name), pid(pid), curr_line_instr(curr_line_instr),
-    total_line_instr(total_line_instr), created_at(created_at),
+Screen::Screen(std::string processName, int processId, int currentLine, int totalLines,
+    std::string creationTime, int memory_to_occupy, int frames_needed)
+    : processName(processName), processId(processId), currentLine(currentLine),
+    totalLines(totalLines), creationTime(creationTime),
     memory_to_occupy(memory_to_occupy), frames_needed(frames_needed),
     status(READY), core_id_assigned(-1), base_frame(-1), last_frame(-1),
     placed_in_memory(0) {}
 
 void Screen::printScreen() {
     if (status != 3) {
-        std::cout << "\nProcess Name: " << process_name << "\n";
-        std::cout << "Time Created: " << created_at << "\n";
+        std::cout << "\nProcess Name: " << processName << "\n";
+        std::cout << "Time Created: " << creationTime << "\n";
 
         std::string strStatus = "";
         switch (status) {
@@ -23,9 +23,9 @@ void Screen::printScreen() {
         }
 
         std::cout << "Status: " << strStatus << "\n";
-        std::cout << "ID: " << pid << "\n";
-        std::cout << "Current Instruction Line: " << curr_line_instr << "\n";
-        std::cout << "Lines of Code: " << total_line_instr << "\n\n";
+        std::cout << "ID: " << processId << "\n";
+        std::cout << "Current Instruction Line: " << currentLine << "\n";
+        std::cout << "Lines of Code: " << totalLines << "\n\n";
     }
     else {
         std::cout << "\nFinished!\n\n";
@@ -33,8 +33,8 @@ void Screen::printScreen() {
 }
 
 int Screen::executeCommand() {
-    curr_line_instr++;
-    if (curr_line_instr == total_line_instr) {
+    currentLine++;
+    if (currentLine == totalLines) {
         status = FINISHED;
         return 0;
     }
