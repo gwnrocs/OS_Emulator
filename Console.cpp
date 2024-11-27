@@ -50,7 +50,7 @@ void Console::createScreen(const string& process_name) {
 
         int pid = screens.size();
         std::shared_ptr<Screen> screen = make_shared<Screen>(Screen(process_name, pid, 0, dist(gen), 
-                                        getCurrentTimestamp(), generatedMemory, 
+                                        Utils::getCurrentTimestamp(), generatedMemory, 
                                         ceil((generatedMemory * 1.0) / memoryPerFrame)));
         screens.push_back(screen);
         scheduler.readyQueue.push_back(screen);
@@ -157,7 +157,7 @@ bool Console::checkExistingScreen(const string& process_name) {
 }
 
 void Console::initScreen(std::shared_ptr<Screen> screen) {
-    clearScreen(false);
+    Utils::clearScreen();
     screen->printScreen();
 
     while (true) {
@@ -166,11 +166,11 @@ void Console::initScreen(std::shared_ptr<Screen> screen) {
         std::getline(std::cin, command);
 
         if (command == "exit") {
-            clearScreen(true);
+            Utils::clearScreen();
             break;
         }
         else if (command == "clear") {
-            clearScreen(false);
+            Utils::clearScreen();
             screen->printScreen();
         }
         else if (command == "process-smi") {
@@ -182,44 +182,9 @@ void Console::initScreen(std::shared_ptr<Screen> screen) {
     }
 }
 
-void Console::clearScreen(bool print_header) {
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-    if (print_header) {
-        printHeader();
-    }
-}
-
-void Console::printHeader() {
-    std::cout << R"(
-  ____  ____   ___   ____   _____  ______    __
- / ___|/ ___| / _ \ |  _ \ | ____|/ ___\ \  / /
-| |    \___ \| | | || |_) ||  _|  \___ \\ \/ / 
-| |___  ___) | |_| ||  __/ | |___  ___) ||  |  
- \____|____/  \___/ |_|    |_____|____/  |_|
-)" << std::endl;
-
-    std::cout << "\033[32mHello, Welcome to CSOPESY commandline!\033[0m" << std::endl;
-    std::cout << "\033[33mType 'exit' to quit, 'clear' to clear the screen\033[0m" << std::endl;
-}
-
-string Console::getCurrentTimestamp() {
-    std::time_t now = std::time(nullptr);
-    std::tm local_time;
-    localtime_s(&local_time, &now);
-
-    char buffer[100];
-    std::strftime(buffer, sizeof(buffer), "%m/%d/%Y, %I:%M:%S%p", &local_time);
-
-    return string(buffer);
-}
-
 void Console::start() {
 
-    clearScreen(true);
+    Utils::clearScreen();
     string command, option, process_name;
 
     while (true) {
@@ -250,7 +215,7 @@ void Console::start() {
                 handleScreenCommand(option, process_name);
             }
             else if (command == "clear") {
-                clearScreen(true);
+                Utils::clearScreen();
             }
             else if (command == "report-util")
             {
@@ -380,7 +345,6 @@ void Console::joinAllThreads()
 
 void Console::scheduler_test()
 {
-
     // we made it -1 in instantiating batch-per-freq, so it's centered at 0
     if (freq == 0) // if statement will dictate if it will create a process
     {
@@ -389,7 +353,9 @@ void Console::scheduler_test()
         std::uniform_int_distribution<> dist(minCommand, maxCommand); // randomize the amount of commands
         std::uniform_int_distribution<> memory(minMemPerProc, maxMemPerProc);
         int generatedMemory = memory(gen);
-        std::shared_ptr<Screen> screen = std::make_shared<Screen>(Screen("process" + std::to_string(currentProcess), currentProcess, 0, dist(gen), getCurrentTimestamp(), generatedMemory, ceil((generatedMemory * 1.0) / memoryPerFrame)));
+        std::shared_ptr<Screen> screen = std::make_shared<Screen>(Screen("process" + std::to_string(currentProcess), 
+            currentProcess, 0, dist(gen), Utils::getCurrentTimestamp(), generatedMemory, 
+            ceil((generatedMemory * 1.0) / memoryPerFrame)));
         screens.push_back(screen);
         scheduler.readyQueue.push_back(screens.back());
 

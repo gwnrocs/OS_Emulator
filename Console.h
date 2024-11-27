@@ -12,6 +12,7 @@
 #include "Schedule.h"
 #include "Screen.h"
 #include "Memory.h"
+#include "Utils.h"
 
 class Console {
 private:
@@ -51,12 +52,7 @@ private:
     void initScreen(std::shared_ptr<Screen> screen);
     void handleScreenCommand(const std::string& option, const std::string& process_name);
     void listScreens(bool debug = false);
-    void clearScreen(bool print_header);
-    void printHeader();
     void joinAllThreads();
-
-    // File IO helpers
-    std::string getCurrentTimestamp();
 
 public:
     Console();
