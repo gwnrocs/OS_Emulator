@@ -114,18 +114,11 @@ bool Memory::takeBackingStore(std::shared_ptr<Screen> screen)
 
 void Memory::deallocate(std::shared_ptr<Screen> screen)
 {
-    try {
-        if (checkIfProcessExistsInMemory(screen)) {
-            if (type == 0)
-                deallocateFlatMemory(screen);
-            else
-                deallocateFrames(screen);
-        }
+    if (checkIfProcessExistsInMemory(screen)) {
+        if (type == 0)
+            deallocateFlatMemory(screen);
         else
-            throw;
-    }
-    catch (exception e) {
-        cout << "Tried to deallocate a process that does not exist: " << e.what() << endl;
+            deallocateFrames(screen);
     }
 }
 
