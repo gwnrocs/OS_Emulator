@@ -49,7 +49,7 @@ int Memory::returnFirstFitIndex(int framesNeeded)
     int increment = 0;
     for (int i = 0; i < numberOfTotalFrames; i++)
     {
-        if (availableFrames[i] == false) {
+        if (flatMemoryAllocator[i] == false) {
             endRange = i;
             increment++;
         }
@@ -145,7 +145,7 @@ void Memory::allocateFlatMemory(std::shared_ptr<Screen> screen)
             screen->base_frame = firstFitIndex;
             screen->last_frame = firstFitIndex + (screen->frames_needed - 1);
 
-            for (int i = firstFitIndex; i <= firstFitIndex + (screen->frames_needed - 1); i++)
+            for (int i = screen->base_frame; i <= screen->last_frame; i++)
                 flatMemoryAllocator[i] = true;
 
             processInMemory.push_back(screen);
